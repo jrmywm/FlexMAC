@@ -20,6 +20,8 @@ def main():
     if digest(lib)!=metadata['library_pruned_sha256']: raise ValueError('Library changed after mapping')
     for path,sha in metadata['rtl_sha256'].items():
         if digest(ROOT/path)!=sha: raise ValueError('RTL changed after mapping')
+    for path,sha in metadata['fixture_sha256'].items():
+        if digest(ROOT/path)!=sha: raise ValueError('Fixture changed after mapping')
     reports=[]
     for row in manifest:
         name=row['design'];netlist=ROOT/row['netlist'];params=row['params']
@@ -42,6 +44,7 @@ def main():
                               capture_output=True,text=True,timeout=600)
         save(MAP/f'{name}.replay.log',result.stdout+result.stderr)
         original=ROOT/'build'/REFERENCE_CSV[name]
+        if digest(original)!=row['rtl_reference_sha256']: raise ValueError('RTL reference changed after timing analysis')
         expected=list(csv.DictReader(original.open()));actual=list(csv.DictReader(replay.open()))
         if len(actual)!=359 or actual!=expected: raise ValueError(f'{name}: mapped replay differs from RTL')
         reports.append({'design':name,'frames':len(actual),'rtl_csv_sha256':digest(original),

@@ -183,6 +183,7 @@ def run():
         'config':cfg,'library_source_sha256':digest(source),'library_pruned_sha256':digest(lib),
         'liberty_cells':len(areas),'yosys_version':subprocess.check_output(['yosys','-V'],text=True).strip(),
         'sta_binary_sha256':digest(sta),'rtl_sha256':{p:digest(ROOT/p) for p in SOURCES},
+        'fixture_sha256':{p.relative_to(ROOT).as_posix():digest(p) for p in (ROOT/'model/agreement').glob('*.hex')},
         'residual_rom_sha256':digest(ROOT/'model/agreement/residual_ranges.hex'),
         'scope':'pre-layout, one typical corner, ideal wires and clock; not signoff'}
     for key,path in (('opensta_commit','.tools/OpenSTA'),('cudd_commit','.tools/cudd')):
@@ -222,6 +223,7 @@ def run():
                     'common_hold_wns_ns':check['hold_wns_ns'],
                     'electrical_violations_reported':check['electrical_violations_reported']})
         refs=list(csv.DictReader((ROOT/'build'/REFERENCE_CSV[name]).open()))
+        row['rtl_reference_sha256']=digest(ROOT/'build'/REFERENCE_CSV[name])
         if len(refs)!=359: raise ValueError('Missing 359-frame RTL reference replay')
         no_gap=[int(r['command_to_valid_cycles'])-(10 if int(r['sample'])%11==0 else 0) for r in refs]
         row['mean_no_gap_cycles']=sum(no_gap)/359;row['worst_no_gap_cycles']=max(no_gap)
