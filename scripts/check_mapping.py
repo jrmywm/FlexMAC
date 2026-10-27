@@ -174,6 +174,11 @@ def sta_design(name, period, tag, sta,lib,cfg,details=False):
 
 def run():
     cfg=json.loads(CONFIG.read_text()); MAP.mkdir(parents=True,exist_ok=True)
+    architecture_lock=json.loads((ROOT/'eda/architectures.json').read_text())
+    if architecture_lock['designs']!=DESIGNS: raise ValueError('Architecture configurations changed after freeze')
+    for path,sha in architecture_lock['source_sha256'].items():
+        canonical=(ROOT/path).read_text(encoding='utf-8').encode()
+        if hashlib.sha256(canonical).hexdigest()!=sha: raise ValueError(f'Frozen architecture changed: {path}')
     sta=os.environ.get('STA') or shutil.which('sta')
     if not sta or not shutil.which('yosys'):
         print('BLOCKED: yosys and STA/OpenSTA are required',file=sys.stderr);return 2
@@ -184,6 +189,8 @@ def run():
     libtext,areas,sequential=prepare_library(original)
     lib=MAP/'library_pruned.lib';save(lib,libtext)
     metadata={'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
+        'architecture_baseline_commit':architecture_lock['baseline_commit'],
+        'architecture_lock_sha256':digest(ROOT/'eda/architectures.json'),
         'config':cfg,'library_source_sha256':digest(source),'library_pruned_sha256':digest(lib),
         'liberty_cells':len(areas),'yosys_version':subprocess.check_output(['yosys','-V'],text=True).strip(),
         'sta_binary_sha256':digest(sta),'rtl_sha256':{p:digest(ROOT/p) for p in SOURCES},

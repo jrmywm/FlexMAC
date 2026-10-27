@@ -16,6 +16,11 @@ The original and modified library hashes, source hashes and tool versions are
 recorded with each run. CI builds timing tools on Linux; no local vendor FPGA
 suite or full PDK installation is needed.
 
+`eda/architectures.json` locks the four parameter sets and hashes of the RTL
+and residual-model table against verified baseline
+`ad8f5d5e91190fdaaaf80ba636df1f5fc2d8349a`. Mapping refuses architecture changes;
+this phase changes the implementation flow and test instrumentation only.
+
 Library units are checked explicitly: ns and pF. Cells in the lpflow/probe
 families are excluded from mapping. Liberty wire-load tables, selections and
 default wire-load settings are removed from the analysis/mapping copy. Thus the

@@ -8,6 +8,15 @@ from check_mapping import prepare_library,parse_sta,sdc_text
 
 
 class MappingTests(unittest.TestCase):
+    def test_frozen_architectures(self):
+        import hashlib,json
+        from check_mapping import DESIGNS
+        root=Path(__file__).resolve().parents[1]
+        lock=json.loads((root/'eda/architectures.json').read_text())
+        self.assertEqual(lock['designs'],DESIGNS)
+        for path,sha in lock['source_sha256'].items():
+            self.assertEqual(hashlib.sha256((root/path).read_text(encoding='utf-8').encode()).hexdigest(),sha,path)
+
     def test_library_units_and_wire_pruning(self):
         text='''library ("example") {
 time_unit : "1ns";
