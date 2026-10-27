@@ -1,0 +1,2 @@
+PASS stream impl=0 frames=172 reset_cancellations=2
+tests/tb_stream.v:108: $finish called at 2707416000 (1ps)

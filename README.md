@@ -21,11 +21,13 @@ The [arithmetic specification](docs/specification.md) defines every width,
 signed interpretation, handshake, and wrap behavior. The shared and mux engines
 must return identical results for identical frames.
 
-**Status:** initial implementation and verification flow. Check the completed
-[Verify FlexMAC workflow](https://github.com/jrmywm/FlexMAC/actions/workflows/verify.yml)
-for actual RTL results. Classifier accuracy, mapped area, constrained timing,
-and power results are not available yet. Generic synthesis alone establishes
-none of those claims.
+**Status:** the [first RTL verification run](https://github.com/jrmywm/FlexMAC/actions/runs/40445230045)
+passed 131,072 product vectors, 172 frames per stream implementation, reset and
+overflow checks, a rejected sign-bug control, and six generic synthesis checks.
+The first generic result does **not** favor sharing: 732 cells for the shared
+product versus 650 for the separate-unit mux. See the [initial results](docs/initial_results.md).
+Classifier accuracy, mapped area, constrained timing, and power results are not
+available yet. Generic counts alone establish none of those claims.
 
 ## Run the checks
 

@@ -24,6 +24,10 @@ arithmetic, not automatic adaptation.
 Seven days is a planning estimate, not a waiting period. Each milestone advances
 when its evidence passes. No result is marked complete because a script exists.
 
+Milestone 1 passed in [CI run 40445230045](https://github.com/jrmywm/FlexMAC/actions/runs/40445230045).
+The [initial report](initial_results.md) records the verification and the first
+generic counts, which do not show a sharing benefit. Milestones 2-4 remain open.
+
 ## Workload contract to freeze before measuring accuracy
 
 Proposed benchmark: the small 8x8 handwritten-digit dataset available through

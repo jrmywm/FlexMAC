@@ -1,0 +1,2 @@
+FATAL: tests/tb_product.v:21: shared product mismatch mode=          1 a=08 b=01 actual=     8 expected=         -8
+       Time: 67586000  Scope: tb_product

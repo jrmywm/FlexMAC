@@ -1,0 +1,18 @@
+{
+  "source_commit": "d1e496086930fc20123c9a12a9af1c124f0b1e2e",
+  "run_url": "https://github.com/jrmywm/FlexMAC/actions/runs/40445230045",
+  "artifact_id": 12708540000,
+  "snapshot_sha256": {
+    "generic_synthesis.csv": "b7712560d4dace084495930e570f6dc1807907d675a538bdddcdb934908fddab",
+    "iverilog_version.log": "f9199cc8658f4afcec3edeb93f29f23bb2aebf66d3eeb217cdc728aaa692f946",
+    "negative_control.log": "3d8a1a26e532dd64c7e3f940779b1e65ddd260e25de60c9cb5932b4e27a7efcc",
+    "product.log": "c3d9966a56bceded1d1fcafce9fd6ce91f3b02c81bcc4a90e33d40776b222943",
+    "stream_0.csv": "924cda638d63a10b37a2b66345003f80355a224d65027ec547f4b05d424c4f8c",
+    "stream_0.log": "9f7f2eb6b9d552b4ca8c1bda3a8420021bea57ade49328558927c776060f02ae",
+    "stream_1.csv": "924cda638d63a10b37a2b66345003f80355a224d65027ec547f4b05d424c4f8c",
+    "stream_1.log": "eaaf97a39a1670b8510fb4577d704a3889b110dfcfb92edc92773e80a605ec7b",
+    "verification.json": "987ff4b3c0409983039d322d2aef4383d88711153e1ff9c9c32f7f734ff3f2cd",
+    "yosys_version.log": "14022961a7564dcc908f30f8b52cc1289449e8f25a95ed5c2d2afb88c4bde4fa"
+  },
+  "text_normalization": "Committed text snapshots use UTF-8 LF; original bytes remain in the CI artifact."
+}

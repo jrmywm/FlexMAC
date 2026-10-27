@@ -1,0 +1,2 @@
+PASS exhaustive products: 65536 input pairs per mode, total=131072
+tests/tb_product.v:31: $finish called at 131072000 (1ps)
