@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 module tb_adaptive;
-    parameter PRODUCT_IMPL=0, FORCE_INT8=0;
+    parameter PRODUCT_IMPL=0, FORCE_INT8=0, INT8_LANES=1;
     localparam ALL=1437, FIRST=1078, N=359;
     reg clk=0;
     always #5 clk=!clk;
@@ -8,7 +8,7 @@ module tb_adaptive;
     reg [4:0] pixel=0;
     wire start_ready,pixel_ready,result_valid,result_fallback,result_error;
     wire [3:0] result_class;
-    flexmac_adaptive #(.PRODUCT_IMPL(PRODUCT_IMPL),.FORCE_INT8(FORCE_INT8)) dut(
+    flexmac_adaptive #(.PRODUCT_IMPL(PRODUCT_IMPL),.FORCE_INT8(FORCE_INT8),.INT8_LANES(INT8_LANES)) dut(
         clk,rst,start_valid,start_ready,pixel_valid,pixel_ready,pixel,
         result_valid,result_ready,result_class,result_fallback,result_error);
     reg [7:0] raw [0:ALL*64-1], predictions8 [0:ALL-1], expected_accept [0:ALL-1];
@@ -74,7 +74,7 @@ module tb_adaptive;
             end
             start_valid=0; end_cycle=cycle;
             fallback_expected=!FORCE_INT8 && !expected_accept[image][0];
-            expected_cycles=bad_index>=0 ? 64 : FORCE_INT8 ? 704 : fallback_expected ? 1034 : 394;
+            expected_cycles=bad_index>=0 ? 64 : FORCE_INT8 ? (INT8_LANES == 2 ? 384 : 704) : fallback_expected ? 1034 : 394;
             if(gaps) expected_cycles=expected_cycles+10;
             if(end_cycle-begin_cycle!=expected_cycles) $fatal(1,"adaptive cycle mismatch got=%0d expected=%0d",end_cycle-begin_cycle,expected_cycles);
             if(bad_index>=0) begin
@@ -103,7 +103,8 @@ module tb_adaptive;
         $readmemh("model/agreement/scores_int4.hex",scores4);
         $readmemh("model/agreement/reference_int8.hex",predictions8);
         $readmemh("model/agreement/expected_conditioned.hex",expected_accept);
-        if(FORCE_INT8) f=$fopen("build/adaptive_always_int8.csv","w");
+        if(FORCE_INT8 && INT8_LANES == 2) f=$fopen("build/int8_two_lane.csv","w");
+        else if(FORCE_INT8) f=$fopen("build/adaptive_always_int8.csv","w");
         else if(PRODUCT_IMPL==0) f=$fopen("build/adaptive_shared.csv","w");
         else f=$fopen("build/adaptive_mux.csv","w");
         if(!f) $fatal(1,"adaptive report open");
@@ -130,7 +131,7 @@ module tb_adaptive;
         infer(FIRST,0,0);infer(FIRST,0,63);
         for(i=FIRST;i<FIRST+N;i=i+1) infer(i,i%11==0,-1);
         $fclose(f);
-        $display("PASS adaptive impl=%0d force_int8=%0d: %0d calibration images, accepted=%0d fallback=%0d; exact INT8 decisions, class scores, interval containment, cycle counts, invalid pixels, reset and stalls",PRODUCT_IMPL,FORCE_INT8,N,accepted,fallbacks);
+        $display("PASS raw classifier impl=%0d force_int8=%0d int8_lanes=%0d: %0d calibration images, no_fallback=%0d fallback=%0d; exact INT8 decisions, class scores, applicable interval containment, cycle counts, invalid pixels, reset and stalls",PRODUCT_IMPL,FORCE_INT8,INT8_LANES,N,accepted,fallbacks);
         $finish;
     end
     initial begin #10000000;$fatal(1,"adaptive watchdog");end

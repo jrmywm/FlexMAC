@@ -59,6 +59,11 @@ See [the agreement derivation and feasibility study](docs/agreement_study.md).
 The [adaptive hardware contract](docs/adaptive.md) explains input preservation,
 on-chip preprocessing, certification and fallback.
 
+A [two-lane INT8 baseline](docs/two_lane_int8.md) has now been implemented to
+test ordinary parallelism against the adaptive engine. It targets 384 cycles
+per image on the same raw-input interface; verification and synthesis results
+are pending. Its second weight read and additional arithmetic are counted.
+
 ## Run the checks
 
 Python 3.10+ is sufficient for the independent model:

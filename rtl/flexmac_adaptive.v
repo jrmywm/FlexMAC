@@ -2,7 +2,9 @@
 // FORCE_INT8 is a fair baseline with the same raw-pixel interface and checks.
 module flexmac_adaptive #(
     parameter PRODUCT_IMPL = 0,
-    parameter FORCE_INT8 = 0
+    parameter FORCE_INT8 = 0,
+    // Two lanes apply only to the always-INT8 baseline; adaptive reruns stay serial.
+    parameter INT8_LANES = 1
 ) (
     input wire clk, rst,
     input wire start_valid,
@@ -25,27 +27,39 @@ module flexmac_adaptive #(
     reg signed [31:0] lower_scores [0:9], upper_scores [0:9];
     reg certified, fallback, input_error;
     wire mode4 = !FORCE_INT8 && state != EVAL8 && state != CHECK;
-    wire [5:0] low_index = mode4 ? {index[4:0],1'b0} : index;
+    wire paired = mode4 || (FORCE_INT8 && INT8_LANES == 2);
+    wire [5:0] low_index = paired ? {index[4:0],1'b0} : index;
     wire [5:0] high_index = {index[4:0],1'b1};
     wire [7:0] quant8_low, quant8_high;
     wire [3:0] quant4_low, quant4_high;
     digits_pixel_quantizer qlow(pixels[low_index], quant8_low, quant4_low);
     digits_pixel_quantizer qhigh(pixels[high_index], quant8_high, quant4_high);
     wire [7:0] operand = mode4 ? {quant4_high, quant4_low} : quant8_low;
-    wire [9:0] weight_address = mode4 ? {1'b0,class_index,index[4:0]} : {class_index,index};
+    wire [9:0] weight_address = mode4 ? {1'b0,class_index,index[4:0]} : {class_index,low_index};
     wire [3:0] bias_class = state == LOAD || state == CHECK ? 4'd0 : class_index+1'b1;
     wire [7:0] weight;
     wire signed [31:0] bias;
     digits_model_rom weights(mode4, weight_address, bias_class, weight, bias);
     wire signed [15:0] product;
+    wire signed [16:0] beat_product;
     wire signed [12:0] lo0, hi0, lo1, hi1;
     wire signed [31:0] residual_bias;
     generate
-        if (FORCE_INT8) begin : fixed_core
+        if (FORCE_INT8 && INT8_LANES == 2) begin : fixed_pair
+            wire [7:0] weight_high;
+            wire signed [31:0] unused_bias;
+            digits_model_rom high_weights(1'b0, {class_index,high_index}, 4'd0, weight_high, unused_bias);
+            flexmac_product_int8x2 core(quant8_low, weight, quant8_high, weight_high, beat_product);
+            assign product=0;
+            assign lo0=0; assign hi0=0; assign lo1=0; assign hi1=0;
+            assign residual_bias=0;
+        end else if (FORCE_INT8) begin : fixed_core
             flexmac_product_int8 core(operand, weight, product);
+            assign beat_product={product[15],product};
             assign lo0=0; assign hi0=0; assign lo1=0; assign hi1=0;
             assign residual_bias=0;
         end else begin : configurable_core
+            assign beat_product={product[15],product};
             if (PRODUCT_IMPL == 0) begin : shared_core
                 flexmac_product core(operand, weight, mode4, product);
             end else begin : mux_core
@@ -56,11 +70,11 @@ module flexmac_adaptive #(
             digits_residual_bias offsets(bias_class,residual_bias);
         end
     endgenerate
-    wire signed [31:0] completed_score = accumulator + {{16{product[15]}},product};
+    wire signed [31:0] completed_score = accumulator + {{15{beat_product[16]}},beat_product};
     wire signed [31:0] scaled_score = completed_score * 32'sd366;
     wire signed [31:0] lower_complete = scaled_score + residual_lower + {{19{lo0[12]}},lo0} + {{19{lo1[12]}},lo1};
     wire signed [31:0] upper_complete = scaled_score + residual_upper + {{19{hi0[12]}},hi0} + {{19{hi1[12]}},hi1};
-    wire last_index = mode4 ? index == 31 : index == 63;
+    wire last_index = paired ? index == 31 : index == 63;
     wire score_commit = !rst && (state == EVAL4 || state == EVAL8) && last_index;
     wire check_pass = check_index == best_class || lower_scores[best_class] > upper_scores[check_index];
     assign start_ready = !rst && state == IDLE;

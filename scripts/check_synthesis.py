@@ -29,7 +29,8 @@ def main():
                ('agreement_pairwise','flexmac_agreement',None),
                ('adaptive_shared','flexmac_adaptive',0),
                ('adaptive_mux','flexmac_adaptive',1),
-               ('adaptive_always_int8','flexmac_adaptive',2)]
+               ('adaptive_always_int8','flexmac_adaptive',2),
+               ('int8_two_lane','flexmac_adaptive',3)]
     rows = []
     for name,top,impl in designs:
         # Preserve the original source set for the six arithmetic experiments.
@@ -39,7 +40,7 @@ def main():
         if top == 'flexmac_agreement':
             sources = 'rtl/flexmac_agreement.v rtl/digits_agreement_bounds.v'
         if top == 'flexmac_adaptive':
-            sources = ('rtl/flexmac_product.v rtl/flexmac_baselines.v rtl/digits_model_rom.v '
+            sources = ('rtl/flexmac_product.v rtl/flexmac_baselines.v rtl/flexmac_int8x2.v rtl/digits_model_rom.v '
                        'rtl/digits_residual_rom.v rtl/digits_pixel_quantizer.v rtl/flexmac_adaptive.v')
         if top.startswith('flexmac_classifier'):
             sources += ' rtl/digits_model_rom.v rtl/flexmac_classifier.v'
@@ -47,8 +48,8 @@ def main():
             sources += ' rtl/flexmac_classifier_fixed.v'
         commands = f'read_verilog {sources}; '
         if impl is not None:
-            if top == 'flexmac_adaptive' and impl == 2:
-                commands += f'chparam -set FORCE_INT8 1 {top}; '
+            if top == 'flexmac_adaptive' and impl in (2,3):
+                commands += f'chparam -set FORCE_INT8 1 -set INT8_LANES {2 if impl == 3 else 1} {top}; '
             else:
                 commands += f'chparam -set PRODUCT_IMPL {impl} {top}; '
         commands += f'synth -top {top} -flatten -noabc; check -assert; write_json build/{name}.json'
