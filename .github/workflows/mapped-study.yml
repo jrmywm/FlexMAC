@@ -1,0 +1,68 @@
+name: Mapped area, timing and replay
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mapped-study:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install build and EDA tools
+        timeout-minutes: 8
+        run: |
+          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
+          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y yosys iverilog cmake g++ make autoconf automake libtool flex libfl-dev bison swig tcl-dev zlib1g-dev libeigen3-dev libfmt-dev
+      - name: Cache pinned timing tools
+        id: tools
+        uses: actions/cache/restore@v4
+        with:
+          path: .tools
+          key: flexmac-timing-ubuntu24-${{ hashFiles('eda/toolchain.json', 'scripts/build_timing_tools.sh') }}-v1
+      - name: Build pinned CUDD and OpenSTA
+        if: steps.tools.outputs.cache-hit != 'true'
+        run: bash scripts/build_timing_tools.sh
+      - name: Save built timing tools before running experiments
+        if: steps.tools.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .tools
+          key: flexmac-timing-ubuntu24-${{ hashFiles('eda/toolchain.json', 'scripts/build_timing_tools.sh') }}-v1
+      - name: Verify models, constraints and RTL references
+        run: |
+          python -m unittest discover -s tests -v
+          bash scripts/check_adaptive.sh
+      - name: Map frozen engines and directly test setup brackets and common clock
+        env:
+          STA: ${{ github.workspace }}/.tools/OpenSTA/build/sta
+        run: python scripts/check_mapping.py
+      - name: Replay library-mapped netlists against RTL
+        run: python scripts/check_mapped.py
+      - name: Record source history and tools
+        if: always()
+        run: |
+          mkdir -p build
+          git bundle create build/source.bundle HEAD
+          yosys -V > build/mapping_yosys_version.log
+          iverilog -V > build/mapping_iverilog_version.log 2>&1
+          if [ -x .tools/OpenSTA/build/sta ]; then .tools/OpenSTA/build/sta -version > build/mapping_sta_version.log; fi
+      - name: Upload mapped evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flexmac-mapped-study
+          path: |
+            build/map/
+            build/mapped_comparison.csv
+            build/*int8*.csv
+            build/adaptive_*.csv
+            build/mapping_*version.log
+            build/source.bundle

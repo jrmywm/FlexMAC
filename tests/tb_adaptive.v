@@ -8,7 +8,11 @@ module tb_adaptive;
     reg [4:0] pixel=0;
     wire start_ready,pixel_ready,result_valid,result_fallback,result_error;
     wire [3:0] result_class;
+`ifdef GATE_LEVEL
+    flexmac_mapped dut(
+`else
     flexmac_adaptive #(.PRODUCT_IMPL(PRODUCT_IMPL),.FORCE_INT8(FORCE_INT8),.INT8_LANES(INT8_LANES)) dut(
+`endif
         clk,rst,start_valid,start_ready,pixel_valid,pixel_ready,pixel,
         result_valid,result_ready,result_class,result_fallback,result_error);
     reg [7:0] raw [0:ALL*64-1], predictions8 [0:ALL-1], expected_accept [0:ALL-1];
@@ -18,6 +22,7 @@ module tb_adaptive;
     reg signed [31:0] expected_score;
     always @(posedge clk) begin
         cycle<=cycle+1;
+`ifndef GATE_LEVEL
         if (check_scores && dut.score_commit) begin
             expected_score=dut.mode4 ? scores4[sample*10+dut.class_index] : scores8[sample*10+dut.class_index];
             if (dut.completed_score !== expected_score) $fatal(1,"adaptive score mismatch sample=%0d class=%0d mode4=%0d",sample,dut.class_index,dut.mode4);
@@ -31,6 +36,7 @@ module tb_adaptive;
                 if (dut.class_index !== checked8-1) $fatal(1,"INT8 class progression");
             end
         end
+`endif
     end
     task reset_engine;
         begin
@@ -82,7 +88,9 @@ module tb_adaptive;
             end else begin
                 if(result_error || result_class!==predictions8[image][3:0] || result_fallback!==fallback_expected)
                     $fatal(1,"adaptive decision mismatch sample=%0d",image);
+`ifndef GATE_LEVEL
                 if(checked4!=(FORCE_INT8 ? 0 : 10) || checked8!=((FORCE_INT8 || fallback_expected) ? 10 : 0)) $fatal(1,"adaptive missing scores");
+`endif
                 if(fallback_expected) fallbacks=fallbacks+1;else accepted=accepted+1;
                 $fdisplay(f,"%0d,%0d,%0d,%0d,%0d,%0d",image,FORCE_INT8,PRODUCT_IMPL,result_class,result_fallback,end_cycle-begin_cycle);
             end
@@ -97,13 +105,15 @@ module tb_adaptive;
             if(!start_ready || result_valid || result_class || result_error || result_fallback) $fatal(1,"adaptive result consume");
         end
     endtask
+    reg [2047:0] report_path;
     initial begin
         $readmemh("model/agreement/raw_pixels.hex",raw);
         $readmemh("model/agreement/scores_int8.hex",scores8);
         $readmemh("model/agreement/scores_int4.hex",scores4);
         $readmemh("model/agreement/reference_int8.hex",predictions8);
         $readmemh("model/agreement/expected_conditioned.hex",expected_accept);
-        if(FORCE_INT8 && INT8_LANES == 2) f=$fopen("build/int8_two_lane.csv","w");
+        if($value$plusargs("report=%s",report_path)) f=$fopen(report_path,"w");
+        else if(FORCE_INT8 && INT8_LANES == 2) f=$fopen("build/int8_two_lane.csv","w");
         else if(FORCE_INT8) f=$fopen("build/adaptive_always_int8.csv","w");
         else if(PRODUCT_IMPL==0) f=$fopen("build/adaptive_shared.csv","w");
         else f=$fopen("build/adaptive_mux.csv","w");
@@ -116,14 +126,22 @@ module tb_adaptive;
         if(!FORCE_INT8) begin
             // Zero normalized input makes intervals exact; cancel during CHECK.
             command;pixel_valid=1;pixel=8;repeat(64) @(negedge clk);pixel_valid=0;
+`ifdef GATE_LEVEL
+            repeat(320) @(negedge clk);
+`else
             while(dut.state!=3) @(negedge clk);
+`endif
             reset_engine;
             // Find a known fallback using calibration metadata, then cancel INT8.
             i=FIRST;while(expected_accept[i]) i=i+1;
             command;pixel_valid=1;
             for(k=0;k<64;k=k+1) begin pixel=raw[i*64+k][4:0];@(negedge clk);end
             pixel_valid=0;
+`ifdef GATE_LEVEL
+            repeat(330) @(negedge clk);
+`else
             while(dut.state!=4) @(negedge clk);
+`endif
             repeat(13) @(negedge clk);reset_engine;
         end
         command;pixel_valid=1;pixel=8;repeat(64) @(negedge clk);pixel_valid=0;
@@ -131,7 +149,11 @@ module tb_adaptive;
         infer(FIRST,0,0);infer(FIRST,0,63);
         for(i=FIRST;i<FIRST+N;i=i+1) infer(i,i%11==0,-1);
         $fclose(f);
+`ifdef GATE_LEVEL
+        $display("PASS gate-level black-box replay impl=%0d force_int8=%0d int8_lanes=%0d: %0d calibration images, no_fallback=%0d fallback=%0d; decisions, flags, cycles, invalid pixels, reset and stalls",PRODUCT_IMPL,FORCE_INT8,INT8_LANES,N,accepted,fallbacks);
+`else
         $display("PASS raw classifier impl=%0d force_int8=%0d int8_lanes=%0d: %0d calibration images, no_fallback=%0d fallback=%0d; exact INT8 decisions, class scores, applicable interval containment, cycle counts, invalid pixels, reset and stalls",PRODUCT_IMPL,FORCE_INT8,INT8_LANES,N,accepted,fallbacks);
+`endif
         $finish;
     end
     initial begin #10000000;$fatal(1,"adaptive watchdog");end

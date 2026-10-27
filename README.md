@@ -69,6 +69,11 @@ and generic logic here; physical timing and area remain unmeasured.
 
 ## Run the checks
 
+The [library-mapped study](docs/mapped_study.md) now has a pinned SKY130/OpenSTA
+flow, direct setup-period searches, common-clock checks and mapped functional
+replay. Its first complete run is pending. Existing generic counts remain
+distinct from standard-cell area and timing.
+
 Python 3.10+ is sufficient for the independent model:
 
 ```text

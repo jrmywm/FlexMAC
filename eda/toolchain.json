@@ -1,0 +1,22 @@
+{
+  "opensta_repository": "https://github.com/parallaxsw/OpenSTA.git",
+  "opensta_commit": "b99a8e528de098e4e06dbb6a0bb5423d6ada2f51",
+  "cudd_repository": "https://github.com/cuddorg/cudd.git",
+  "cudd_commit": "f54f533303640afd5dbe47a05ebeabb3066f2a25",
+  "library_path": ".tools/OpenSTA/examples/sky130hd_tt.lib.gz",
+  "library_sha256": "210e56be3a3a0907b5241a34d277f664cf4b4d91dcb49a27ff813df4406a5889",
+  "library_name": "sky130_fd_sc_hd__tt_025C_1v80",
+  "corner": "typical, 25 C, 1.80 V",
+  "mapping_target_ns": 10.0,
+  "period_resolution_ns": 0.05,
+  "io_max_fraction": 0.2,
+  "io_min_ns": 0.0,
+  "setup_uncertainty_ns": 0.1,
+  "hold_uncertainty_ns": 0.0,
+  "input_driving_cell": "sky130_fd_sc_hd__buf_2",
+  "input_driving_pin": "X",
+  "output_load_ff": 10.0,
+  "output_load_pf": 0.01,
+  "wire_model": "ideal wires; Liberty wire-load models and defaults removed",
+  "clock_model": "ideal clock; no clock tree, routing or extracted parasitics"
+}
