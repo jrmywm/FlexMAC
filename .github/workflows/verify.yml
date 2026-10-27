@@ -22,6 +22,8 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Exhaustive products, streams, overflow and negative control
         run: python scripts/check_rtl.py
+      - name: RTL classifier scores, predictions, stalls and signed argmax
+        run: bash scripts/check_classifier.sh
       - name: Generic synthesis of cores and engines
         run: python scripts/check_synthesis.py
       - name: Record tool versions and source history

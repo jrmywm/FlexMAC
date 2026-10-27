@@ -21,10 +21,13 @@ def main():
                ('fixed_int8','flexmac_product_int8',None),
                ('fixed_int4x2','flexmac_product_int4x2',None),
                ('stream_shared','flexmac_stream',0),
-               ('stream_mux','flexmac_stream',1)]
+               ('stream_mux','flexmac_stream',1),
+               ('classifier_shared','flexmac_classifier',0),
+               ('classifier_mux','flexmac_classifier',1)]
     rows = []
     for name,top,impl in designs:
-        commands = 'read_verilog rtl/flexmac_product.v rtl/flexmac_baselines.v rtl/flexmac_stream.v; '
+        commands = ('read_verilog rtl/flexmac_product.v rtl/flexmac_baselines.v '
+                    'rtl/flexmac_stream.v rtl/digits_model_rom.v rtl/flexmac_classifier.v; ')
         if impl is not None:
             commands += f'chparam -set PRODUCT_IMPL {impl} {top}; '
         commands += f'synth -top {top} -flatten -noabc; check -assert; write_json build/{name}.json'

@@ -26,11 +26,14 @@ when its evidence passes. No result is marked complete because a script exists.
 
 Milestone 1 passed in [CI run 40445230045](https://github.com/jrmywm/FlexMAC/actions/runs/40445230045).
 The [initial report](initial_results.md) records the verification and the first
-generic counts, which do not show a sharing benefit. Milestones 2-4 remain open.
+generic counts, which do not show a sharing benefit. Milestone 2 now has a frozen
+model and classifier RTL awaiting CI replay; see [the workload contract](classifier.md).
+INT4 misses the declared accuracy budget in the offline model evaluation.
+Milestones 3-4 remain open.
 
 ## Workload contract to freeze before measuring accuracy
 
-Proposed benchmark: the small 8x8 handwritten-digit dataset available through
+Frozen benchmark: the small 8x8 handwritten-digit dataset available through
 scikit-learn, using a linear classifier so its arithmetic is a manageable set of
 dot products. This is a kernel study, not a complete CNN accelerator.
 
@@ -42,8 +45,8 @@ dot products. This is a kernel study, not a complete CNN accelerator.
 - Specify scaling, clipping, rounding, bias handling, accumulator width, and padding.
 - Distinguish arithmetic verification (bit-exact integer results) from the
   model's prediction accuracy after quantization.
-- Declare host-side work such as quantization, bias addition or argmax explicitly;
-  count only implemented hardware operations in accelerator measurements.
+- Host quantization is outside the RTL; bias addition and argmax are implemented
+  in Verilog. Count only implemented hardware operations in accelerator measurements.
 
 ## Fair comparisons
 

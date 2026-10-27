@@ -16,6 +16,10 @@ and evaluation; configurable precision itself is an established technique.
   input-valid gating, output backpressure, and reset cancellation.
 - An independent Python arithmetic model, exhaustive product vectors, framed
   tests including signed overflow, and a deliberately rejected sign-bug control.
+- A ten-class, 64-feature digit classifier: feature storage, frozen weight ROM,
+  bias addition, accumulation and signed argmax in Verilog, in both precisions.
+- Verilog classifier tests against frozen held-out scores, with reset/stall tests
+  and a deliberately rejected unsigned-argmax control.
 
 The [arithmetic specification](docs/specification.md) defines every width,
 signed interpretation, handshake, and wrap behavior. The shared and mux engines
@@ -26,8 +30,12 @@ passed 131,072 product vectors, 172 frames per stream implementation, reset and
 overflow checks, a rejected sign-bug control, and six generic synthesis checks.
 The first generic result does **not** favor sharing: 732 cells for the shared
 product versus 650 for the separate-unit mux. See the [initial results](docs/initial_results.md).
-Classifier accuracy, mapped area, constrained timing, and power results are not
-available yet. Generic counts alone establish none of those claims.
+The frozen classifier model gives 345/360 correct in float and INT8, and 341/360
+in INT4. The INT4 drop of 1.11 percentage points **misses** the one-point budget.
+RTL classifier replay is pending the next CI run. See the
+[classifier contract and methodology](docs/classifier.md).
+Mapped area, constrained timing, and power results are not available yet.
+Generic counts alone establish none of those claims.
 
 ## Run the checks
 
@@ -42,6 +50,7 @@ With Icarus Verilog (`iverilog`, `vvp`) and Yosys on PATH:
 ```text
 python scripts/check_rtl.py
 python scripts/check_synthesis.py
+bash scripts/check_classifier.sh
 ```
 
 The RTL script generates 65,536 operand pairs per mode, tests both stream
@@ -70,8 +79,9 @@ milestones can finish sooner than the original one-week estimate.
 
 ## Scope
 
-This is an AI arithmetic-kernel project. It has not yet demonstrated a complete
-classifier in hardware, a fabricated chip, FPGA execution, or measured energy
-savings. INT4 mode is externally selected and sums two lanes into one dot
+This is a small linear-inference RTL project. The host prepares quantized inputs;
+the classifier hardware computes scores and the winning class. Training and
+quantization are offline preparation. It has not demonstrated a fabricated chip,
+FPGA execution, or measured energy savings. INT4 mode is externally selected and sums two lanes into one dot
 product; it does not return two independent accumulations. Established work such
 as [Bit Fusion](https://arxiv.org/abs/1712.01507) motivates the comparison.
