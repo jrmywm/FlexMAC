@@ -16,6 +16,7 @@ if [[ "${1:-}" == timing ]]; then
     packages+=(cmake g++ make autoconf automake libtool flex libfl-dev bison swig
         tcl-dev zlib1g-dev libeigen3-dev libfmt-dev)
 fi
+if [[ "${1:-}" == replay ]]; then packages+=(verilator g++ make); fi
 sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
 sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 \
     install --no-install-recommends -y "${packages[@]}"

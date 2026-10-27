@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 jobs:
-  mapped-study:
+  map:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
@@ -42,8 +42,6 @@ jobs:
         env:
           STA: ${{ github.workspace }}/.tools/OpenSTA/build/sta
         run: python scripts/check_mapping.py
-      - name: Replay library-mapped netlists against RTL
-        run: python scripts/check_mapped.py
       - name: Record source history and tools
         if: always()
         run: |
@@ -55,6 +53,70 @@ jobs:
       - name: Upload mapped evidence
         if: always()
         uses: actions/upload-artifact@v4
+        with:
+          name: flexmac-mapped-inputs
+          path: |
+            build/map/
+            build/mapped_comparison.csv
+            build/*int8*.csv
+            build/adaptive_*.csv
+            build/mapping_*version.log
+            build/source.bundle
+  replay:
+    needs: map
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        design: [int8_single, int8_two_lane, adaptive_shared, adaptive_mux]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install simulation tools
+        timeout-minutes: 12
+        run: bash scripts/install_ci_tools.sh replay
+      - uses: actions/download-artifact@v4
+        with:
+          name: flexmac-mapped-inputs
+          path: build
+      - name: Full compiled replay and separate four-state verification
+        run: python scripts/check_mapped.py --design ${{ matrix.design }}
+      - name: Preserve replay evidence and failure logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flexmac-gate-${{ matrix.design }}
+          path: |
+            build/map/${{ matrix.design }}.replay.*
+            build/map/${{ matrix.design }}.icarus.*
+            build/map/${{ matrix.design }}.icarus_compile.log
+            build/map/${{ matrix.design }}.verilator.log
+            build/map/${{ matrix.design }}.conversion.log
+            build/map/${{ matrix.design }}.gates.v
+            build/map/${{ matrix.design }}.indices.hex
+  aggregate:
+    needs: [map, replay]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: flexmac-mapped-inputs
+          path: build
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: flexmac-gate-*
+          merge-multiple: true
+          path: build/map
+      - name: Cross-check all replay results and source hashes
+        run: python scripts/check_mapped.py --aggregate-only
+      - uses: actions/upload-artifact@v4
         with:
           name: flexmac-mapped-study
           path: |

@@ -18,6 +18,8 @@ module tb_adaptive;
     reg [7:0] raw [0:ALL*64-1], predictions8 [0:ALL-1], expected_accept [0:ALL-1];
     reg [31:0] scores8 [0:ALL*10-1],scores4 [0:ALL*10-1];
     integer cycle=0, sample=FIRST, checked4=0,checked8=0,accepted=0,fallbacks=0,i,k,f;
+    integer run_index,replay_count=N,use_selection=0;
+    reg [31:0] selected_indices [0:N-1];
     reg check_scores=0;
     reg signed [31:0] expected_score;
     always @(posedge clk) begin
@@ -47,6 +49,9 @@ module tb_adaptive;
             rst=0;
             #1;
             if (!start_ready || result_valid) $fatal(1,"adaptive reset cancellation");
+`ifdef GATE_LEVEL
+            if($test$plusargs("progress")) begin $display("GATE_PROGRESS reset_complete time=%0t",$time);$fflush();end
+`endif
         end
     endtask
     task command;
@@ -105,13 +110,18 @@ module tb_adaptive;
             if(!start_ready || result_valid || result_class || result_error || result_fallback) $fatal(1,"adaptive result consume");
         end
     endtask
-    reg [2047:0] report_path;
+    reg [2047:0] report_path,indices_path;
     initial begin
         $readmemh("model/agreement/raw_pixels.hex",raw);
         $readmemh("model/agreement/scores_int8.hex",scores8);
         $readmemh("model/agreement/scores_int4.hex",scores4);
         $readmemh("model/agreement/reference_int8.hex",predictions8);
         $readmemh("model/agreement/expected_conditioned.hex",expected_accept);
+        if($value$plusargs("indices=%s",indices_path)) begin
+            use_selection=1;
+            if(!$value$plusargs("count=%d",replay_count) || replay_count<1 || replay_count>N) $fatal(1,"invalid replay selection");
+            $readmemh(indices_path,selected_indices,0,replay_count-1);
+        end
         if($value$plusargs("report=%s",report_path)) f=$fopen(report_path,"w");
         else if(FORCE_INT8 && INT8_LANES == 2) f=$fopen("build/int8_two_lane.csv","w");
         else if(FORCE_INT8) f=$fopen("build/adaptive_always_int8.csv","w");
@@ -119,6 +129,7 @@ module tb_adaptive;
         else f=$fopen("build/adaptive_mux.csv","w");
         if(!f) $fatal(1,"adaptive report open");
         $fdisplay(f,"sample,force_int8,product_impl,prediction,fallback,command_to_valid_cycles");
+        $fflush(f);
         reset_engine;
         command; pixel_valid=1;pixel=8;repeat(7) @(negedge clk);reset_engine;
         command; pixel_valid=1;pixel=8;repeat(64) @(negedge clk);pixel_valid=0;
@@ -147,12 +158,22 @@ module tb_adaptive;
         command;pixel_valid=1;pixel=8;repeat(64) @(negedge clk);pixel_valid=0;
         while(!result_valid) @(negedge clk);reset_engine;
         infer(FIRST,0,0);infer(FIRST,0,63);
-        for(i=FIRST;i<FIRST+N;i=i+1) infer(i,i%11==0,-1);
+        for(run_index=0;run_index<replay_count;run_index=run_index+1) begin
+            i=use_selection ? selected_indices[run_index] : FIRST+run_index;
+            if(i<FIRST || i>=FIRST+N) $fatal(1,"replay selection outside calibration split");
+`ifdef GATE_LEVEL
+            if($test$plusargs("progress") && run_index%32==0) begin
+                $display("GATE_PROGRESS frame=%0d sample=%0d time=%0t",run_index,i,$time);$fflush();
+            end
+`endif
+            infer(i,i%11==0,-1);
+            $fflush(f);
+        end
         $fclose(f);
 `ifdef GATE_LEVEL
-        $display("PASS gate-level black-box replay impl=%0d force_int8=%0d int8_lanes=%0d: %0d calibration images, no_fallback=%0d fallback=%0d; decisions, flags, cycles, invalid pixels, reset and stalls",PRODUCT_IMPL,FORCE_INT8,INT8_LANES,N,accepted,fallbacks);
+        $display("PASS gate-level black-box replay impl=%0d force_int8=%0d int8_lanes=%0d: %0d calibration images, no_fallback=%0d fallback=%0d; decisions, flags, cycles, invalid pixels, reset and stalls",PRODUCT_IMPL,FORCE_INT8,INT8_LANES,replay_count,accepted,fallbacks);
 `else
-        $display("PASS raw classifier impl=%0d force_int8=%0d int8_lanes=%0d: %0d calibration images, no_fallback=%0d fallback=%0d; exact INT8 decisions, class scores, applicable interval containment, cycle counts, invalid pixels, reset and stalls",PRODUCT_IMPL,FORCE_INT8,INT8_LANES,N,accepted,fallbacks);
+        $display("PASS raw classifier impl=%0d force_int8=%0d int8_lanes=%0d: %0d calibration images, no_fallback=%0d fallback=%0d; exact INT8 decisions, class scores, applicable interval containment, cycle counts, invalid pixels, reset and stalls",PRODUCT_IMPL,FORCE_INT8,INT8_LANES,replay_count,accepted,fallbacks);
 `endif
         $finish;
     end

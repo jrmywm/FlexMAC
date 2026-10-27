@@ -82,7 +82,16 @@ Liberty Boolean/flip-flop functions expand each mapped netlist into executable
 zero-delay logic. A black-box mode of the existing Verilog bench drives the
 same raw pixels, handshakes, gaps, stalls, invalid inputs and reset scenarios.
 Every output class, fallback flag and exact cycle count must match the RTL CSV,
-with 359 valid frames per design. Internal class scores/intervals are checked in
+with 359 valid frames per design in compiled Verilator simulation. Verilator is
+used as a two-state simulator with randomized initialization (seed 20261027).
+Separate four-state Icarus simulation covers all 359 frames for each INT8 baseline,
+and all eight calibration fallbacks plus one certified example for each of the ten
+INT8 predicted classes for each adaptive design (18 frames). Both backends run the
+bench's reset, invalid-input and output-stall checks. The adaptive four-state subset
+is not equivalent to full four-state replay or formal equivalence. The first full
+Icarus adaptive attempt exceeded a ten-minute wall-clock limit; the split coverage
+makes this cost explicit. Logs and coverage indices are retained even on failure.
+Internal class scores/intervals are checked in
 the RTL regression; they are not observable probes in the mapped replay.
 
 This is a functional check of what mapping produced. It does not use SDF, prove
@@ -95,6 +104,10 @@ The `Mapped area, timing and replay` workflow installs the lightweight EDA/build
 tools and caches the pinned timing-tool build. It runs independently of the
 existing RTL/generic verification workflow. Both must pass before reporting the
 study complete.
+
+Mapping produces one input artifact. Four independent replay jobs check the
+configurations; a final job rechecks source/netlist/CSV hashes and aggregates only
+complete passing results. This prevents a timing-only run being labeled verified.
 
 With those tools available, from the repository root:
 
