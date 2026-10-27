@@ -1,0 +1,41 @@
+name: Verify FlexMAC
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install lightweight RTL tools
+        run: sudo apt-get update && sudo apt-get install -y iverilog yosys
+      - name: Test independent arithmetic model
+        run: python -m unittest discover -s tests -v
+      - name: Exhaustive products, streams, overflow and negative control
+        run: python scripts/check_rtl.py
+      - name: Generic synthesis of cores and engines
+        run: python scripts/check_synthesis.py
+      - name: Record tool versions and source history
+        run: |
+          iverilog -V > build/iverilog_version.log 2>&1
+          yosys -V > build/yosys_version.log
+          git bundle create build/source.bundle HEAD
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flexmac-verification
+          path: |
+            build/*.csv
+            build/*.json
+            build/*.log
+            build/source.bundle
