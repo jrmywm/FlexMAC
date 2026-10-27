@@ -18,9 +18,7 @@ jobs:
           python-version: '3.12'
       - name: Install build and EDA tools
         timeout-minutes: 12
-        run: |
-          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
-          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install --no-install-recommends -y yosys iverilog cmake g++ make autoconf automake libtool flex libfl-dev bison swig tcl-dev zlib1g-dev libeigen3-dev libfmt-dev
+        run: bash scripts/install_ci_tools.sh timing
       - name: Cache pinned timing tools
         id: tools
         uses: actions/cache/restore@v4

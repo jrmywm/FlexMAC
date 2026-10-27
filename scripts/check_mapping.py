@@ -105,6 +105,7 @@ def map_design(name, params, lib, areas, sequential, cfg):
 
 def sdc_text(period,cfg):
     return (f'create_clock -name clk -period {period:.6f} [get_ports clk]\n'
+        f"set_clock_transition {cfg['clock_transition_ns']} [get_clocks clk]\n"
         f"set_clock_uncertainty -setup {cfg['setup_uncertainty_ns']} [get_clocks clk]\n"
         f"set_clock_uncertainty -hold {cfg['hold_uncertainty_ns']} [get_clocks clk]\n"
         'set data_inputs [lsearch -all -inline -not -exact [all_inputs] [get_ports clk]]\n'
@@ -118,6 +119,9 @@ def sdc_text(period,cfg):
 
 def parse_sta(text):
     if re.search(r'(?im)^\s*Error[: ]',text): raise ValueError('OpenSTA error; inspect log')
+    # stderr may be appended after stdout, outside the check_setup marker block.
+    if re.search(r'(?im)^.*Warning.*(?:unconstrained|no.clock|missing.*delay|combinational.loop)',text):
+        raise ValueError('Timing-constraint warning outside check_setup block')
     check=text.split('CHECK_BEGIN\n',1)[1].split('CHECK_END',1)[0]
     if re.search(r'(?i)warning|unconstrained|no.clock|combinational.loop',check):
         raise ValueError(f'Incomplete/invalid timing constraints: {check}')

@@ -40,7 +40,8 @@ separated. These are cell areas, not placed core/die area or routing utilization
 
 Each netlist is linked in OpenSTA with one clock and the same SDC template:
 
-- Ideal clock, setup uncertainty 0.10 ns, hold uncertainty 0 ns.
+- Ideal clock network with explicit 0.10 ns transition, setup uncertainty 0.10 ns,
+  hold uncertainty 0 ns.
 - Input/output maximum external budgets: 20% of the tested clock period each.
 - Input/output minimum delays: 0 ns.
 - `sky130_fd_sc_hd__buf_2`, output pin X, for data-input driving.

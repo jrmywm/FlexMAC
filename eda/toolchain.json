@@ -12,6 +12,7 @@
   "io_max_fraction": 0.2,
   "io_min_ns": 0.0,
   "setup_uncertainty_ns": 0.1,
+  "clock_transition_ns": 0.1,
   "hold_uncertainty_ns": 0.0,
   "input_driving_cell": "sky130_fd_sc_hd__buf_2",
   "input_driving_pin": "X",

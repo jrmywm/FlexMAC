@@ -33,6 +33,7 @@ cell ("sky130_fd_sc_hd__lpflow_test") { area : 100; }
         self.assertEqual(parse_sta(text.replace('0.120000','1.2e-1'))['hold_wns_ns'],0.12)
         with self.assertRaises(ValueError): parse_sta(text.replace('CHECK_END','Warning: unconstrained endpoints\nCHECK_END'))
         with self.assertRaises(ValueError): parse_sta(text+'Error: failed linking\n')
+        with self.assertRaises(ValueError): parse_sta(text+'Warning: unconstrained endpoints\n')
         with self.assertRaises(ValueError): parse_sta(text.replace('GROUP reg2reg -2.5 a/Q b/D','GROUP in2out -2.5 a b'))
 
     def test_sdc_matches_units_and_times_reset(self):
@@ -42,6 +43,7 @@ cell ("sky130_fd_sc_hd__lpflow_test") { area : 100; }
         sdc=sdc_text(10,cfg)
         self.assertIn('set_load 0.01 [all_outputs]',sdc)
         self.assertIn('set_input_delay -max 2.000000',sdc)
+        self.assertIn('set_clock_transition 0.1 [get_clocks clk]',sdc)
         self.assertNotIn('set_false_path',sdc)
         self.assertEqual(cfg['output_load_ff'],1000*cfg['output_load_pf'])
 
