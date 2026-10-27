@@ -1,0 +1,2 @@
+PASS directed classifier impl=1: all-negative ties, signed mixed-score ordering, class-nine winner
+tests/tb_classifier_directed.v:35: $finish called at 10620000 (1ps)

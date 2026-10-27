@@ -32,7 +32,12 @@ The first generic result does **not** favor sharing: 732 cells for the shared
 product versus 650 for the separate-unit mux. See the [initial results](docs/initial_results.md).
 The frozen classifier model gives 345/360 correct in float and INT8, and 341/360
 in INT4. The INT4 drop of 1.11 percentage points **misses** the one-point budget.
-RTL classifier replay is pending the next CI run. See the
+Both RTL implementations reproduced all 14,400 checked class scores in
+[passing CI](https://github.com/jrmywm/FlexMAC/actions/runs/40447266654).
+Without input gaps, INT8 takes 704 cycles per image and INT4 takes 352.
+The complete shared classifier uses 3,965 generic cells versus 3,861 for the mux
+baseline, so sharing does not show a logic-count benefit here either.
+See the [verified classifier results](docs/classifier_results.md) and
 [classifier contract and methodology](docs/classifier.md).
 Mapped area, constrained timing, and power results are not available yet.
 Generic counts alone establish none of those claims.
@@ -73,7 +78,7 @@ Build outputs are ignored under `build/`. No FPGA vendor suite is required.
 | Does sharing save area? | Same-library mapping against fixed and duplicated-unit baselines |
 
 The accuracy target is at most one percentage point below the floating-point
-reference on the same test set. It is a target, not an achieved result.
+reference on the same test set. INT8 meets it; the frozen INT4 model misses it.
 The [milestone plan](docs/research_plan.md) fixes the methodology and scope;
 milestones can finish sooner than the original one-week estimate.
 

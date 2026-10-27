@@ -1,0 +1,9 @@
+design,generic_cells,register_cells,yosys
+shared_product,732,0,Yosys 0.33 (git sha1 2584903a060)
+mux_product,650,0,Yosys 0.33 (git sha1 2584903a060)
+fixed_int8,456,0,Yosys 0.33 (git sha1 2584903a060)
+fixed_int4x2,271,0,Yosys 0.33 (git sha1 2584903a060)
+stream_shared,1113,36,Yosys 0.33 (git sha1 2584903a060)
+stream_mux,1016,36,Yosys 0.33 (git sha1 2584903a060)
+classifier_shared,3965,601,Yosys 0.33 (git sha1 2584903a060)
+classifier_mux,3861,601,Yosys 0.33 (git sha1 2584903a060)

@@ -1,0 +1,2 @@
+PASS classifier impl=0: 360 images/mode, 7200 class scores, float=345 INT8=345 INT4=341 correct; six reset cancellations
+tests/tb_classifier.v:149: $finish called at 3862040000 (1ps)

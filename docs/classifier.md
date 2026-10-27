@@ -14,6 +14,23 @@ training nor input normalization/quantization is implemented in hardware.
 The Verilog testbench reads frozen files and drives the RTL directly; normal
 verification does not import NumPy or scikit-learn.
 
+```mermaid
+flowchart LR
+    H[Host: quantize and pack pixels] --> F[RTL: 64-byte feature bank]
+    R[RTL: frozen weight and bias ROM] --> P[RTL: shared or mux product core]
+    F --> P
+    R --> A[RTL: signed 32-bit accumulator]
+    P --> A
+    A --> W[RTL: signed argmax across ten classes]
+    W --> O[Class index and winning score]
+    C[RTL: load / evaluate / result controller] -.-> F
+    C -.-> R
+    C -.-> A
+    C -.-> W
+```
+
+This is a conceptual RTL block diagram, not a synthesized gate schematic.
+
 ## Frozen experiment
 
 The source is scikit-learn's [8x8 digits dataset](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_digits.html):
@@ -89,7 +106,10 @@ do not affect that transaction. `PRODUCT_IMPL=0` chooses shared partial products
 Both precision ROM banks exist together; INT4 selection does not physically
 remove the INT8 model or halve total area.
 
-## Model result before RTL replay
+## Model result and verified RTL replay
+
+RTL replay reproduced these results in both implementations. See the
+[verified classifier report](classifier_results.md) for cycles, coverage and CI provenance.
 
 | Model | Correct / 360 | Accuracy | Drop from float | <=1 percentage-point budget |
 | --- | ---: | ---: | ---: | --- |

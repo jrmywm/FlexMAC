@@ -1,0 +1,21 @@
+{
+  "source_commit": "1cd283c2938b7d13cba5ac79f2f5237b6cc21055",
+  "workflow_run": 40447266654,
+  "artifact_id": 12708469199,
+  "artifact_sha256": "fa5e8e235f2ed80a4d1f844c0990030ef2eaa6618cfad0baeb17cb3881f40894",
+  "normalization": "UTF-8 LF snapshot; hashes apply to committed snapshot, not raw artifact bytes",
+  "sha256": {
+    "classifier_shared.csv": "4c40d8798f08906129b99f9cd2ebce1bdf43872abc4be3ba739d302a0e1b17ed",
+    "classifier_mux.csv": "cb2f5d42f4e3a0a1a1a7de0c1a4e0543b99f874e58bcfedeeb948df59da30618",
+    "classifier_0.log": "9ac9dd6910d27605fdc4e72d3d89cb10190232c4c852ed9d70901a16f4d0b51e",
+    "classifier_1.log": "bb6efafe0c15e5b3f5376148f4ba0b360a3133c8549e8ee4cba03b601f00f857",
+    "classifier_directed_0.log": "9cad58184fedf305cf46457f069d648fc80ef760529c847626943b86012b0518",
+    "classifier_directed_1.log": "f3eafa43b6248eb306c0888d09f91f82529069129054b04d80207e9acf03a98f",
+    "classifier_negative.log": "c1352e52160108776c3d7e361ea637c97c010f92fd8109803c01a55c0c2e6050",
+    "classifier_sources.log": "411962a9c63f75a6fe87c0c62ff4b29de68bcd78a798a1ebdd7231689832310b",
+    "classifier_source_commit.log": "1617e25e25bd928800125b234c78d34b9064169efc24cd0a8eab2c8fb7860f56",
+    "generic_synthesis.csv": "861e5f6247b0c209fe7927c257ebe6b321fd6c32f8924899d5cb8bbc9c172982",
+    "iverilog_version.log": "f9199cc8658f4afcec3edeb93f29f23bb2aebf66d3eeb217cdc728aaa692f946",
+    "yosys_version.log": "14022961a7564dcc908f30f8b52cc1289449e8f25a95ed5c2d2afb88c4bde4fa"
+  }
+}

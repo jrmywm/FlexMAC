@@ -26,9 +26,11 @@ when its evidence passes. No result is marked complete because a script exists.
 
 Milestone 1 passed in [CI run 40445230045](https://github.com/jrmywm/FlexMAC/actions/runs/40445230045).
 The [initial report](initial_results.md) records the verification and the first
-generic counts, which do not show a sharing benefit. Milestone 2 now has a frozen
-model and classifier RTL awaiting CI replay; see [the workload contract](classifier.md).
-INT4 misses the declared accuracy budget in the offline model evaluation.
+generic counts, which do not show a sharing benefit. Milestone 2 passed
+[RTL replay in CI](https://github.com/jrmywm/FlexMAC/actions/runs/40447266654);
+see [the verified classifier report](classifier_results.md).
+INT4 misses the declared accuracy budget. The experiment is complete even
+though its accuracy hypothesis failed; no tuning on the test set is planned.
 Milestones 3-4 remain open.
 
 ## Workload contract to freeze before measuring accuracy

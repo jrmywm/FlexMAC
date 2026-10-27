@@ -1,5 +1,9 @@
 # First verified arithmetic milestone
 
+Historical snapshot. The later [classifier milestone](classifier_results.md)
+adds verified held-out inference; the unfinished items below describe this
+earlier source revision.
+
 [CI run 40445230045](https://github.com/jrmywm/FlexMAC/actions/runs/40445230045)
 at source `d1e496086930fc20123c9a12a9af1c124f0b1e2e` passed all steps.
 

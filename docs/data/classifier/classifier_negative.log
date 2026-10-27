@@ -1,0 +1,2 @@
+FATAL: tests/tb_classifier_directed.v:30: negative-score/tie selection failed
+       Time: 10610000  Scope: tb_classifier_directed
