@@ -102,3 +102,21 @@ Normal RTL replay uses frozen files and needs no training libraries. The
 optional offline exporter and exact-bound construction remain Python tools;
 preprocessing, MACs, residual accumulation, certification, rerun control and
 class selection in this engine are Verilog.
+
+```mermaid
+flowchart LR
+    P[64 raw pixels] --> B[Pixel buffer]
+    B --> Q[Verilog quantization LUTs]
+    Q --> M[MAC: INT4 pass]
+    Q --> R[Conditioned residual ROM]
+    R --> A[Lower/upper accumulators]
+    M --> C[Ten-class bound check]
+    A --> C
+    C -->|Certified| O[Class and fallback flag]
+    C -->|Uncertain| N[MAC: INT8 rerun]
+    B --> N
+    N --> O
+```
+
+This is a conceptual RTL block diagram. The two MAC nodes are processing phases
+of the selected product implementation, not independently operating engines.

@@ -18,6 +18,7 @@ arithmetic, not automatic adaptation.
 | --- | --- | --- |
 | 1. Arithmetic foundation | Four cores, framed accumulator, mathematical oracle, exhaustive/stream tests | Passing Icarus tests, negative control, generic synthesis logs |
 | 2. Real workload | Small fixed classifier with float, INT8 and INT4 evaluation | Reproducible splits, quantization contract, held-out predictions, RTL dot products |
+| 2a. Precision agreement | Fixed classifier baselines, exact bounds, adaptive INT4-to-INT8 prototype | Bound derivation, calibration-only replay, matched raw-input baseline, full hardware cost |
 | 3. Implementation study | Library mapping and constrained timing for fair baselines | Library/tool hashes, identical assumptions, common-clock feasibility and mapped replay |
 | 4. Explanation | Schematics, useful-work/cycle plots, accuracy-cost table, write-up | Regenerable artifacts and bounded claims |
 
@@ -32,6 +33,13 @@ see [the verified classifier report](classifier_results.md).
 INT4 misses the declared accuracy budget. The experiment is complete even
 though its accuracy hypothesis failed; no tuning on the test set is planned.
 Milestones 3-4 remain open.
+
+The [agreement study](agreement_study.md) adds a new question: can a hardware
+certificate preserve INT8 class decisions while reducing average cycles?
+The compact pairwise certificate fails the cycle-feasibility screen. A tighter
+[input-conditioned RTL prototype](adaptive.md) is undergoing verification.
+Its area and critical-path overhead must be counted. Calibration results are
+not fresh test-set accuracy evidence; agreement is with INT8, not ground truth.
 
 ## Workload contract to freeze before measuring accuracy
 
