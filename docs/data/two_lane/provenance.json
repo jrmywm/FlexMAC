@@ -1,0 +1,23 @@
+{
+  "source_commit": "0625f48fcbf80a646427eabcd06f56bc03953cec",
+  "workflow_run": 40465335020,
+  "artifact_id": 12715887991,
+  "artifact_sha256": "e7a01663b4b912551ed3bc2088c7c25640b6fd22cb4d5ad8bbd320f63c579247",
+  "normalization": "UTF-8 LF with exactly one final newline; hashes apply to the committed snapshot",
+  "sha256": {
+    "generic_synthesis.csv": "372533f83edd0f81d1e07849f98784233a3a6bb2f2c8a234aa25af0da7050d80",
+    "int8_two_lane.csv": "865a1a6dfd9aa06bf98f0cb5b475274c47e99ecff02d2ae3efde95009a2255e4",
+    "int8_two_lane.log": "0adc7e079fc9eb81a18189254d8c4e2d7d1220b00159133e753ec41549a6c05d",
+    "int8x2_product.log": "6d761ac49378bab2a78756a91cb945a7fe8a5fbea2591d15f68ed8f7ebdd9168",
+    "int8x2_negative.log": "536aef0db6790ee15188a5a3d5af2449a2b553d39ecbb9dc96bcd3da98db0ace",
+    "adaptive_always_int8.csv": "bdde04a2eee6cba4306453d8022294c50fe00dbadb8b245d0ba8b90d806957de",
+    "adaptive_shared.csv": "a7e5090dc11e118baa0085109a40b2db8c9f0c0d771614e4f423ee4fc5f39155",
+    "adaptive_mux.csv": "7fc13638902a3be800eeb5bcbdde9e361e77cbb1fc18b55d56864a5c496addfd",
+    "adaptive_always_int8.log": "a0b2fee336272dc25f84b9be45ceb5418bf6adf664820d7fc4bfad165c9ecbd7",
+    "adaptive_0.log": "a299541f5dc4ed8f56e94109f22f364d8ac41b41da5de119fc68ba431d6a70e8",
+    "adaptive_1.log": "6a2b70eb8b42c575212bbf3119f6eeaabc550a0303fb63f2cd5bff91cc68ed6b",
+    "adaptive_sources.log": "dd2a0e4331f89469381e50ae54b7886ac7398949aa99c6a16ac3074cdd58b880",
+    "iverilog_version.log": "610c0e3258d3104227f97bfdcae4ace7377cbd30bc77a0d9d8d7dca5746a5462",
+    "yosys_version.log": "14022961a7564dcc908f30f8b52cc1289449e8f25a95ed5c2d2afb88c4bde4fa"
+  }
+}

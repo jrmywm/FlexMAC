@@ -60,9 +60,12 @@ The [adaptive hardware contract](docs/adaptive.md) explains input preservation,
 on-chip preprocessing, certification and fallback.
 
 A [two-lane INT8 baseline](docs/two_lane_int8.md) has now been implemented to
-test ordinary parallelism against the adaptive engine. It targets 384 cycles
-per image on the same raw-input interface; verification and synthesis results
-are pending. Its second weight read and additional arithmetic are counted.
+test ordinary parallelism against the adaptive engine. It passed all class-score
+and decision checks on the same 359 calibration images at **384 cycles per
+image and 3,492 generic cells**. In that run, adaptive shared uses 26,855 cells
+and averages 408.26 cycles. Its second weight read and additional arithmetic are
+counted. Ordinary parallel INT8 is the stronger baseline on both cycle count
+and generic logic here; physical timing and area remain unmeasured.
 
 ## Run the checks
 
@@ -100,6 +103,7 @@ Build outputs are ignored under `build/`. No FPGA vendor suite is required.
 | Does INT4 preserve enough accuracy? | Frozen quantization and a held-out classifier test set |
 | Is useful work faster? | Measured frame cycles and feasible timing, including delivery/control overhead |
 | Can adaptive precision preserve INT8 decisions? | Exact agreement bounds, RTL calibration replay and full checker cost |
+| Does adaptation beat ordinary parallel INT8? | Complete two-lane baseline, identical inputs and same-run cost/cycle comparison |
 | Does sharing save area? | Same-library mapping against fixed and duplicated-unit baselines |
 
 The accuracy target is at most one percentage point below the floating-point

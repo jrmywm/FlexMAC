@@ -1,5 +1,9 @@
 # Verified precision-agreement results
 
+Historical adaptive milestone. The later [two-lane INT8 comparison](two_lane_int8.md)
+finds fewer cycles and fewer generic cells with ordinary parallel INT8; follow
+that report for the current baseline and next engineering decision.
+
 [CI run 40463259340](https://github.com/jrmywm/FlexMAC/actions/runs/40463259340)
 passed at source `87025fa4b300500b79804eac226ea4d7e33ea256`.
 The [adaptive RTL contract](adaptive.md) and [bound derivation](agreement_study.md)

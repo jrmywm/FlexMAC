@@ -1,0 +1,2 @@
+FATAL: tests/tb_int8x2.v:19: two-lane product mismatch got=-32768 expected=32768
+       Time: 1756000  Scope: tb_int8x2

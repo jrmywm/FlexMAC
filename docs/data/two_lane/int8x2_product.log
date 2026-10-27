@@ -1,0 +1,2 @@
+PASS INT8x2: 4096 signed-boundary combinations, including +32768
+tests/tb_int8x2.v:23: $finish called at 4096000 (1ps)

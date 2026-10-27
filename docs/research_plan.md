@@ -20,6 +20,7 @@ selects an INT8 rerun when INT4 cannot establish the same class decision.
 | 1. Arithmetic foundation | Four cores, framed accumulator, mathematical oracle, exhaustive/stream tests | Passing Icarus tests, negative control, generic synthesis logs |
 | 2. Real workload | Small fixed classifier with float, INT8 and INT4 evaluation | Reproducible splits, quantization contract, held-out predictions, RTL dot products |
 | 2a. Precision agreement | Fixed classifier baselines, exact bounds, adaptive INT4-to-INT8 prototype | Bound derivation, calibration-only replay, matched raw-input baseline, full hardware cost |
+| 2b. Parallel INT8 control | Two-lane INT8 with identical raw-input interface | Bit-exact class scores, width-fault rejection, 384-cycle replay and same-run generic comparison |
 | 3. Implementation study | Library mapping and constrained timing for fair baselines | Library/tool hashes, identical assumptions, common-clock feasibility and mapped replay |
 | 4. Explanation | Schematics, useful-work/cycle plots, accuracy-cost table, write-up | Regenerable artifacts and bounded claims |
 
@@ -43,6 +44,12 @@ generic synthesis. It saves average cycles with about 9.4x the generic logic
 of the matched INT8 baseline; see [the precision results](precision_results.md).
 Its mapped area and critical-path overhead still require measurement. Calibration results are
 not fresh test-set accuracy evidence; agreement is with INT8, not ground truth.
+
+Milestone 2b passed [CI run 40465335020](https://github.com/jrmywm/FlexMAC/actions/runs/40465335020).
+The [two-lane INT8 baseline](two_lane_int8.md) needs 384 cycles and 3,492 generic
+cells, fewer than adaptive on both measures. It is now the primary performance
+reference. Freeze the architectures and advance to library mapping and timing;
+do not assume certificate optimization is the highest-value next step.
 
 ## Workload contract to freeze before measuring accuracy
 
