@@ -27,6 +27,7 @@ jobs:
       - name: Generic synthesis of cores and engines
         run: python scripts/check_synthesis.py
       - name: Record tool versions and source history
+        if: always()
         run: |
           iverilog -V > build/iverilog_version.log 2>&1
           yosys -V > build/yosys_version.log

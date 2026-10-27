@@ -112,7 +112,10 @@ module tb_classifier;
         $readmemh("model/digits/predictions_int4.hex", predictions4);
         $readmemh("model/digits/labels.hex", labels);
         $readmemh("model/digits/float_predictions.hex", floating);
-        file_out = $fopen(PRODUCT_IMPL == 0 ? "build/classifier_shared.csv" : "build/classifier_mux.csv", "w");
+        // Keep strings separate: packed conditional strings of unequal length
+        // are not portable across Icarus versions.
+        if (PRODUCT_IMPL == 0) file_out = $fopen("build/classifier_shared.csv", "w");
+        else file_out = $fopen("build/classifier_mux.csv", "w");
         if (!file_out) $fatal(1, "cannot open report");
         $fdisplay(file_out, "implementation,bits,sample,label,prediction,score,command_to_valid_cycles,evaluation_cycles");
         reset_engine;
