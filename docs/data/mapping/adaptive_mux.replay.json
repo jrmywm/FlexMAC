@@ -1,0 +1,40 @@
+{
+  "design": "adaptive_mux",
+  "source_commit": "96141e7767723cfd53e6830a948e46bef05687d8",
+  "frames": 359,
+  "full_backend": "Verilator two-state, randomized initialization seed 20261027",
+  "four_state_backend": "Icarus Verilog",
+  "four_state_frames": 18,
+  "four_state_indices": [
+    1078,
+    1079,
+    1080,
+    1081,
+    1082,
+    1084,
+    1086,
+    1089,
+    1096,
+    1104,
+    1135,
+    1151,
+    1185,
+    1254,
+    1270,
+    1377,
+    1384,
+    1399
+  ],
+  "four_state_scope": "all calibration fallbacks plus one certified example per INT8 predicted class",
+  "rtl_csv_sha256": "7fc13638902a3be800eeb5bcbdde9e361e77cbb1fc18b55d56864a5c496addfd",
+  "mapped_csv_sha256": "7fc13638902a3be800eeb5bcbdde9e361e77cbb1fc18b55d56864a5c496addfd",
+  "four_state_csv_sha256": "aff165d47ca9a7f138d3b5f14be59ce5eccf6284698d946387aea4b145dfee12",
+  "netlist_sha256": "3f49e6678984b1b9fe373e37eadd3506234000bd559a37ece84c040b76d27aa5",
+  "gate_model_sha256": "b15fb3f62dd43a8cc8480215ba512b0168811019e6990561932aaec4cfaa7c89",
+  "versions": {
+    "verilator": "Verilator 5.020 2024-01-01 rev (Debian 5.020-1)",
+    "iverilog": "Icarus Verilog version 12.0 (stable) ()",
+    "yosys": "Yosys 0.33 (git sha1 2584903a060)"
+  },
+  "passed": true
+}

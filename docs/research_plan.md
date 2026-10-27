@@ -34,7 +34,9 @@ generic counts, which do not show a sharing benefit. Milestone 2 passed
 see [the verified classifier report](classifier_results.md).
 INT4 misses the declared accuracy budget. The experiment is complete even
 though its accuracy hypothesis failed; no tuning on the test set is planned.
-Milestones 3-4 remain open.
+Milestones 3-4 are documented in the later [mapped study](mapped_study.md), with
+mapped replay, a checked common clock, cell-area breakdown and regenerable
+figures. Earlier milestone reports retain their historical generic counts.
 
 The [agreement study](agreement_study.md) adds a new question: can a hardware
 certificate preserve INT8 class decisions while reducing average cycles?
@@ -42,14 +44,19 @@ The compact pairwise certificate fails the cycle-feasibility screen. A tighter
 [input-conditioned RTL prototype](adaptive.md) passed calibration replay and
 generic synthesis. It saves average cycles with about 9.4x the generic logic
 of the matched INT8 baseline; see [the precision results](precision_results.md).
-Its mapped area and critical-path overhead still require measurement. Calibration results are
+The later mapped study measures its area and critical-path overhead. Calibration results are
 not fresh test-set accuracy evidence; agreement is with INT8, not ground truth.
 
 Milestone 2b passed [CI run 40465335020](https://github.com/jrmywm/FlexMAC/actions/runs/40465335020).
 The [two-lane INT8 baseline](two_lane_int8.md) needs 384 cycles and 3,492 generic
 cells, fewer than adaptive on both measures. It is now the primary performance
-reference. Freeze the architectures and advance to library mapping and timing;
-do not assume certificate optimization is the highest-value next step.
+reference. The subsequent frozen-architecture mapped study finds that two-lane
+INT8 retains its advantage: 30,006 µm² and 5.220 µs mean latency at its tested
+passing period, versus about 168,000 µm² and 6.95-7.02 µs for adaptive. The
+current design decision is to choose ordinary two-lane INT8 for this workload.
+An optional future experiment would test whether a pipelined two-lane engine
+improves useful-work latency after counting its extra registers and cycles.
+That experiment is outside this completed comparison; no improvement is assumed.
 
 ## Workload contract to freeze before measuring accuracy
 

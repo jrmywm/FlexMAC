@@ -2,7 +2,9 @@
 
 Historical adaptive milestone. The later [two-lane INT8 comparison](two_lane_int8.md)
 finds fewer cycles and fewer generic cells with ordinary parallel INT8; follow
-that report for the current baseline and next engineering decision.
+that report for the generic comparison. The later [mapped study](mapped_study.md)
+confirms the two-lane engine's area and elapsed-latency advantage under one
+pre-layout SKY130 corner and constraint set.
 
 [CI run 40463259340](https://github.com/jrmywm/FlexMAC/actions/runs/40463259340)
 passed at source `87025fa4b300500b79804eac226ea4d7e33ea256`.

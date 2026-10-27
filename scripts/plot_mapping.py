@@ -34,7 +34,8 @@ def main():
     worst=[float(r['worst_latency_at_common_ns'])/1000 for r in rows]
     plt.rcParams.update({'font.family':'DejaVu Sans','font.size':11,'axes.spines.top':False,
                          'axes.spines.right':False,'svg.fonttype':'none'})
-    fig,axes=plt.subplots(1,2,figsize=(12,5.4))
+    fig,grid=plt.subplots(2,2,figsize=(12,9.2))
+    axes=grid.ravel()
     for ax in axes:
         ax.set_axisbelow(True);ax.grid(axis='y',alpha=.16);ax.set_xticks(range(4),labels)
     axes[0].bar(range(4),area,color=colors,width=.64)
@@ -47,13 +48,33 @@ def main():
     axes[1].set_ylim(0,max(worst)*1.25)
     for i,value in enumerate(mean): axes[1].text(i,value+max(worst)*.025,f'{value:.2f}',ha='center')
     axes[1].legend(frameon=False,loc='upper left')
+    tested=[float(r['setup_period_pass_ns']) for r in rows]
+    failing=[float(r['setup_period_fail_ns']) for r in rows]
+    axes[2].bar(range(4),tested,color=colors,width=.64)
+    axes[2].errorbar(range(4),tested,yerr=[[a-b for a,b in zip(tested,failing)],[0]*4],
+                     fmt='none',ecolor='#30343b',capsize=5)
+    axes[2].set_ylabel('Clock period (ns)')
+    axes[2].set_title('Directly tested setup-period brackets',loc='left',fontweight='bold')
+    axes[2].set_ylim(0,max(tested)*1.2)
+    for i,value in enumerate(tested): axes[2].text(i,value+.4,f'{value:.2f}',ha='center')
+    own=[float(r['mean_latency_at_tested_pass_ns'])/1000 for r in rows]
+    own_worst=[float(r['worst_no_gap_cycles'])*t/1000 for r,t in zip(rows,tested)]
+    axes[3].bar(range(4),own,color=colors,width=.64)
+    axes[3].scatter(range(4),own_worst,marker='D',facecolors='white',edgecolors='#30343b',s=45,zorder=4)
+    axes[3].set_ylabel('Command-to-valid latency (µs)')
+    axes[3].set_title("Each design at its tested passing period",loc='left',fontweight='bold')
+    axes[3].set_ylim(0,max(own_worst)*1.2)
+    for i,value in enumerate(own): axes[3].text(i,value+max(own_worst)*.025,f'{value:.2f}',ha='center')
     violations=sum(int(r['electrical_violations_reported']) for r in rows)
     note=f'SKY130 HD TT, 1.80 V / 25°C · ideal wires and clock · pre-layout estimate, not signoff\n359 calibration images; input gaps and result stalls excluded. Electrical violators reported: {violations}.'
     fig.suptitle('FlexMAC: mapped area and scheduled inference latency',x=.07,ha='left',fontweight='bold',fontsize=15)
     fig.text(.07,.02,note,fontsize=9,color='#505864',va='bottom')
-    fig.tight_layout(rect=[.02,.12,.99,.91])
+    fig.tight_layout(rect=[.02,.09,.99,.95],h_pad=2.8)
     args.output.parent.mkdir(parents=True,exist_ok=True)
     for suffix in ('.png','.svg'): fig.savefig(args.output.with_suffix(suffix),dpi=160,facecolor='white')
+    svg=args.output.with_suffix('.svg')
+    svg.write_text('\n'.join(line.rstrip() for line in svg.read_text(encoding='utf-8').splitlines())+'\n',
+                   encoding='utf-8',newline='\n')
     provenance={'mapping_source_commit':metadata['source_commit'],
         'csv_sha256':hashlib.sha256(args.input.read_bytes()).hexdigest(),'matplotlib':matplotlib.__version__}
     args.output.with_suffix('.json').write_text(json.dumps(provenance,indent=2)+'\n',encoding='utf-8',newline='\n')

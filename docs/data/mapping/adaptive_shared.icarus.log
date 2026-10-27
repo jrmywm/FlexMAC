@@ -1,0 +1,9 @@
+GATE_PROGRESS reset_complete time=31000
+GATE_PROGRESS reset_complete time=151000
+GATE_PROGRESS reset_complete time=1031000
+GATE_PROGRESS reset_complete time=4921000
+GATE_PROGRESS reset_complete time=9041000
+GATE_PROGRESS reset_complete time=13031000
+GATE_PROGRESS frame=0 sample=1078 time=14430000
+PASS gate-level black-box replay impl=0 force_int8=0 int8_lanes=1: 18 calibration images, no_fallback=10 fallback=8; decisions, flags, cycles, invalid pixels, reset and stalls
+/home/runner/work/FlexMAC/FlexMAC/tests/tb_adaptive.v:178: $finish called at 137930000 (1ps)

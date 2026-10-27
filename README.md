@@ -7,6 +7,28 @@ small classifier: does it meet an accuracy budget, and what area/latency cost
 comes with supporting both modes? The contribution is the verified implementation
 and evaluation; configurable precision itself is an established technique.
 
+## Main finding
+
+For this frozen linear classifier, ordinary two-lane INT8 is a stronger design
+than the implemented adaptive INT4/INT8 engine. The adaptive design preserves
+INT8 decisions, but its certification hardware costs more area and its fallback
+adds latency. The project records that result, including the failed hypotheses.
+
+| Raw-input engine | Mapped cell area (µm²) | Mean latency, common 19 ns clock | Mean latency, own tested setup period |
+| --- | ---: | ---: | ---: |
+| Single-lane INT8 | 26,358 | 13.38 µs | 8.28 µs |
+| Two-lane INT8 | 30,006 | 7.30 µs | 5.22 µs |
+| Adaptive shared | 167,946 | 7.76 µs | 6.95 µs |
+| Adaptive mux | 167,562 | 7.76 µs | 7.02 µs |
+
+These are pre-layout SKY130 HD typical-corner estimates with ideal wires/clock,
+not fabricated-chip measurements. Mean latency uses 359 calibration images and
+excludes injected input gaps. The 10 ns mapping target failed for all designs;
+the table uses directly tested passing periods. No power saving is claimed.
+See the [mapped comparison and verification scope](docs/mapped_study.md).
+
+![Mapped area, tested clock periods and inference latency](docs/figures/mapped_comparison.png)
+
 ## Current implementation
 
 - A shared partial-product core: one signed INT8 product, or two signed INT4
@@ -39,8 +61,9 @@ The current shared classifier uses 3,958 generic cells versus 3,854 for the mux
 baseline, so sharing does not show a logic-count benefit here either.
 See the [verified classifier results](docs/classifier_results.md) and
 [classifier contract and methodology](docs/classifier.md).
-Mapped area, constrained timing, and power results are not available yet.
-Generic counts alone establish none of those claims.
+Those historical generic counts do not establish physical area, timing or power.
+The later raw-input mapped study above provides area and timing estimates;
+power remains unmeasured.
 
 ## Precision-fallback investigation
 
@@ -53,8 +76,9 @@ offline, and the adaptive RTL reproduces this result: 351 certified inputs,
 eight INT8 reruns, and agreement with INT8 on all 359 calibration images.
 Mean latency without input gaps is 408.26 cycles versus 704 for the matched
 always-INT8 raw-input baseline. **The cost is about 9.4x the generic logic.**
-The worst-case path takes 1,034 cycles. Neither mapped-area nor elapsed-time
-improvement has been established. See the [verified precision results](docs/precision_results.md).
+The worst-case path takes 1,034 cycles. The later mapped comparison finds that
+two-lane INT8 is smaller and faster than this prototype. See the historical
+[verified precision results](docs/precision_results.md).
 See [the agreement derivation and feasibility study](docs/agreement_study.md).
 The [adaptive hardware contract](docs/adaptive.md) explains input preservation,
 on-chip preprocessing, certification and fallback.
@@ -65,14 +89,18 @@ and decision checks on the same 359 calibration images at **384 cycles per
 image and 3,492 generic cells**. In that run, adaptive shared uses 26,855 cells
 and averages 408.26 cycles. Its second weight read and additional arithmetic are
 counted. Ordinary parallel INT8 is the stronger baseline on both cycle count
-and generic logic here; physical timing and area remain unmeasured.
+and generic logic here. The mapped study confirms its area and latency advantage
+under the stated library and timing assumptions.
 
 ## Run the checks
 
 The [library-mapped study](docs/mapped_study.md) now has a pinned SKY130/OpenSTA
 flow, direct setup-period searches, common-clock checks and mapped functional
-replay. Its first complete run is pending. Existing generic counts remain
-distinct from standard-cell area and timing.
+replay. Full compiled two-state replay covers 359 images per design. Separate
+four-state simulation covers all 359 images per INT8 baseline and 18 selected
+images per adaptive design, including every calibration fallback. Generic counts
+remain distinct from standard-cell area and timing. See the report for evidence
+and the limits of the replay coverage.
 
 Python 3.10+ is sufficient for the independent model:
 

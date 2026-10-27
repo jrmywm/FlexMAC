@@ -1,9 +1,70 @@
-# Library-mapped comparison: method
+# Library-mapped comparison
 
 The RTL architectures and frozen models are unchanged. This flow maps the four
 raw-input engines into one characterized standard-cell library and tests whether
 the generic-cell/cycle conclusions survive technology mapping. The flow is
-implemented; results are pending its first complete CI execution.
+implemented with the methods and limitations below.
+
+## Result: choose the two-lane INT8 engine for this workload
+
+[Mapped CI run 40475813403](https://github.com/jrmywm/FlexMAC/actions/runs/40475813403)
+and [RTL regression 40475813443](https://github.com/jrmywm/FlexMAC/actions/runs/40475813443)
+both passed at source `96141e7767723cfd53e6830a948e46bef05687d8`.
+Mapping uses Yosys 0.33 and OpenSTA 3.1.0; replay uses Verilator 5.020 and
+Icarus Verilog 12.0. The evidence snapshot and artifact provenance are linked below.
+
+The complete two-lane INT8 engine adds 13.8% mapped cell area over single-lane
+INT8 and reduces mean latency by 36.9% when each design uses its own directly
+tested passing setup period. At a common 19 ns clock it reduces latency by
+45.5%. Both adaptive versions cost about 5.6 times its mapped area and take
+longer, even on certified frames (394 versus 384 cycles). This is evidence
+against the current adaptive implementation's efficiency hypothesis.
+
+| Engine | Cell area (µm²) | Sequential / combinational area (µm²) | Failing / passing setup period (ns) | Mean cycles | Worst cycles |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Single-lane INT8 | 26,357.78 | 8,187.85 / 18,169.93 | 11.71875 / 11.7578125 | 704.00 | 704 |
+| Two-lane INT8 | 30,006.28 | 8,167.83 / 21,838.44 | 13.5546875 / 13.59375 | 384.00 | 384 |
+| Adaptive shared | 167,946.07 | 22,581.66 / 145,364.42 | 16.9921875 / 17.03125 | 408.26 | 1,034 |
+| Adaptive mux | 167,561.96 | 22,581.66 / 144,980.30 | 17.1484375 / 17.1875 | 408.26 | 1,034 |
+
+| Engine | Mean / worst latency at 19 ns (µs) | Mean / worst latency at own passing period (µs) | Common setup / hold worst slack (ns) |
+| --- | ---: | ---: | ---: |
+| Single-lane INT8 | 13.376 / 13.376 | 8.278 / 8.278 | +7.2675 / +0.1217 |
+| Two-lane INT8 | 7.296 / 7.296 | 5.220 / 5.220 | +5.4092 / +0.1372 |
+| Adaptive shared | 7.757 / 19.646 | 6.953 / 17.610 | +1.9735 / +0.1521 |
+| Adaptive mux | 7.757 / 19.646 | 7.017 / 17.772 | +1.8473 / +0.1521 |
+
+![Mapped comparison](figures/mapped_comparison.png)
+
+All four designs **fail the 10 ns mapping target**. That target is never used
+as a claimed operating point. Every common-clock analysis reports positive
+setup and hold slack and zero max-slew/max-capacitance violations under the
+chosen assumptions. Ideal-clock hold results do not establish post-CTS hold
+closure. The shortest-period bracket is a setup-only search; hold slack at its
+passing endpoint is also positive in this run.
+
+The common-clock table controls for period; the own-period table accounts for
+each design's timing cost. The two-lane engine has a longer clock period than
+single-lane, so its elapsed-time gain is smaller than its cycle-count gain.
+Adaptive results are weighted by 351 certified / eight fallback calibration
+frames. They do not measure held-out accuracy, a large neural network, or a
+production input distribution. Ground-truth accuracy remains the frozen
+360-image study: float/INT8 345 correct, INT4 341 correct.
+
+The sequential-area breakdown is based on characterized flip-flop/latch cell
+types; reset/enable logic is counted as combinational area. Adaptive overhead
+is predominantly combinational (about 145,000 µm²), not just additional flops.
+The total includes residual/model ROM logic, quantization, arithmetic, buffering
+and control. No module-by-module area attribution is claimed after flattening.
+The worst reported paths are register-to-register, with long carry/mux logic
+in their cell traces. Assigning each segment to a named RTL operation would
+require a separate correspondence analysis.
+
+The shared and mux adaptive versions differ by only 0.23% in mapped area. A
+single mapping/library run cannot establish a robust advantage from that gap.
+There is no evidence here of energy savings or a new arithmetic technique.
+The useful contribution is the verified implementation and a comparison that
+changes the design choice after counting the whole engine.
 
 ## Fixed tools and library
 
@@ -124,6 +185,23 @@ clock reports, mapped replay results and CSV table are under `build/map/` and
 `build/mapped_comparison.csv`. CI uploads them with a source-history bundle.
 Missing tools or library inputs are reported as blocked, not a passing result.
 
+The committed [evidence snapshot](data/mapping/) retains the result table,
+timing searches, common-clock constraints/reports, cell breakdowns and replay
+CSVs/logs. Its provenance file records the measured source revision, CI artifact
+checksum and hashes of the committed files. Full mapped netlists, the expanded
+gate models and Liberty copy remain in the CI artifact. Historical generic
+snapshots are preserved in their original directories.
+
+To regenerate the four-panel scientific figure from the committed snapshot:
+
+```bash
+python -m pip install -r docs/requirements-figures.txt
+python scripts/plot_mapping.py
+```
+
+Plotting needs no EDA tools. The plot script requires completed mapping metadata
+and four passing mapped-replay reports; it does not substitute for those checks.
+
 Power/energy, multiple process/voltage/temperature corners, wire parasitics,
 physical optimization, routed area and signoff are not measured. A better result
 here supports a bounded pre-layout comparison, not a fabrication-ready chip.
@@ -131,4 +209,5 @@ here supports a bounded pre-layout comparison, not a fabrication-ready chip.
 Primary tool references: [OpenSTA](https://github.com/parallaxsw/OpenSTA),
 [OpenSTA timing examples and units](https://github.com/The-OpenROAD-Project/OpenSTA/blob/master/doc/Examples.md),
 [Yosys 0.33 ABC constraints](https://github.com/YosysHQ/yosys/blob/yosys-0.33/passes/techmap/abc.cc),
-and [SKY130 library documentation](https://skywater-pdk.readthedocs.io/en/main/contents/libraries.html).
+[SKY130 library documentation](https://skywater-pdk.readthedocs.io/en/main/contents/libraries.html),
+and [Verilator initialization and simulation options](https://verilator.org/guide/latest/exe_verilator.html).

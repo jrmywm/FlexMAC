@@ -1,5 +1,9 @@
 # Two-lane INT8 baseline
 
+The later [library-mapped study](mapped_study.md) adds standard-cell area,
+directly tested setup periods, common-clock latency and mapped functional
+replay. This document preserves the earlier generic-synthesis milestone.
+
 [CI run 40465335020](https://github.com/jrmywm/FlexMAC/actions/runs/40465335020)
 passed at source `0625f48fcbf80a646427eabcd06f56bc03953cec`.
 The [evidence snapshot](data/two_lane/) records logs, CSVs, source hashes and
