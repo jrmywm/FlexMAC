@@ -35,7 +35,7 @@ in INT4. The INT4 drop of 1.11 percentage points **misses** the one-point budget
 Both RTL implementations reproduced all 14,400 checked class scores in
 [passing CI](https://github.com/jrmywm/FlexMAC/actions/runs/40447266654).
 Without input gaps, INT8 takes 704 cycles per image and INT4 takes 352.
-The complete shared classifier uses 3,965 generic cells versus 3,861 for the mux
+The current shared classifier uses 3,958 generic cells versus 3,854 for the mux
 baseline, so sharing does not show a logic-count benefit here either.
 See the [verified classifier results](docs/classifier_results.md) and
 [classifier contract and methodology](docs/classifier.md).
@@ -49,9 +49,12 @@ conservative INT4/INT8 agreement checker passed CI. The frozen
 training/calibration study finds a real limitation:
 the compact checker accepts only 134/359 calibration inputs, so serial fallback
 would be slower than always-INT8. Tighter input-dependent bounds accept 351/359
-offline. An adaptive RTL prototype now computes those bounds and reruns INT8
-when needed, alongside an always-INT8 raw-input baseline; its CI verification
-and hardware-cost results are pending. No adaptive speedup is claimed.
+offline, and the adaptive RTL reproduces this result: 351 certified inputs,
+eight INT8 reruns, and agreement with INT8 on all 359 calibration images.
+Mean latency without input gaps is 408.26 cycles versus 704 for the matched
+always-INT8 raw-input baseline. **The cost is about 9.4x the generic logic.**
+The worst-case path takes 1,034 cycles. Neither mapped-area nor elapsed-time
+improvement has been established. See the [verified precision results](docs/precision_results.md).
 See [the agreement derivation and feasibility study](docs/agreement_study.md).
 The [adaptive hardware contract](docs/adaptive.md) explains input preservation,
 on-chip preprocessing, certification and fallback.
@@ -91,6 +94,7 @@ Build outputs are ignored under `build/`. No FPGA vendor suite is required.
 | Is the integer arithmetic correct? | Exhaustive products and oracle-checked streamed sums |
 | Does INT4 preserve enough accuracy? | Frozen quantization and a held-out classifier test set |
 | Is useful work faster? | Measured frame cycles and feasible timing, including delivery/control overhead |
+| Can adaptive precision preserve INT8 decisions? | Exact agreement bounds, RTL calibration replay and full checker cost |
 | Does sharing save area? | Same-library mapping against fixed and duplicated-unit baselines |
 
 The accuracy target is at most one percentage point below the floating-point
@@ -100,9 +104,11 @@ milestones can finish sooner than the original one-week estimate.
 
 ## Scope
 
-This is a small linear-inference RTL project. The host prepares quantized inputs;
-the classifier hardware computes scores and the winning class. Training and
-quantization are offline preparation. It has not demonstrated a fabricated chip,
-FPGA execution, or measured energy savings. INT4 mode is externally selected and sums two lanes into one dot
-product; it does not return two independent accumulations. Established work such
+This is a small linear-inference RTL project. The original classifier accepts
+host-quantized features. The adaptive engine accepts raw pixels and implements
+quantization, certification and INT8 fallback in Verilog. Training and frozen
+model preparation remain offline. It has not demonstrated a fabricated chip,
+FPGA execution, or measured energy savings. INT4 arithmetic sums two lanes into
+one dot-product term. The adaptive controller selects precision internally;
+the original interface accepts an external mode. Established work such
 as [Bit Fusion](https://arxiv.org/abs/1712.01507) motivates the comparison.

@@ -1,0 +1,30 @@
+{
+  "source_commit": "87025fa4b300500b79804eac226ea4d7e33ea256",
+  "workflow_run": 40463259340,
+  "artifact_id": 12715039983,
+  "artifact_sha256": "521b63a5643f056ec5d3efc23ee522d7b25c019bdb7fe7da398c0e0ef6b6e2f5",
+  "normalization": "UTF-8 LF snapshot; hashes apply to committed snapshot, not raw artifact bytes",
+  "sha256": {
+    "generic_synthesis.csv": "b210af867727185de0e9bf252f3db890478d2b6b7ec4b6e1b554710219226876",
+    "adaptive_shared.csv": "a7e5090dc11e118baa0085109a40b2db8c9f0c0d771614e4f423ee4fc5f39155",
+    "adaptive_mux.csv": "7fc13638902a3be800eeb5bcbdde9e361e77cbb1fc18b55d56864a5c496addfd",
+    "adaptive_always_int8.csv": "bdde04a2eee6cba4306453d8022294c50fe00dbadb8b245d0ba8b90d806957de",
+    "adaptive_0.log": "0c337ee81ee6f2bf271a0db3f2950e8c06423ddccd47837eec700f50103950c1",
+    "adaptive_1.log": "0eac8948d744f43efecccb7fc2f1f288b154a2b36fea600b79a0e609e96275cd",
+    "adaptive_always_int8.log": "ac2542ba56a6281a9ef76b7e1e3d3e3820071cb41a4369b301b5f0c4885fa367",
+    "adaptive_sources.log": "bc30fdc5c327dcf68ba73547db277ab4d0e42ff29196cd6004aed7e075d3f133",
+    "agreement.log": "774eb25f1ec634913bf21741b97b322f791af14932436b4bc703d5f4794892e0",
+    "agreement_negative.log": "0bf61b615ad98f37f57948ea4eddb0b6bfd74f449059ce659d10d84da3b5e7b2",
+    "agreement_sources.log": "12f084c49fd30947995df581d4bf3f05011a6d27c743a12e0592070af6cfe29c",
+    "classifier_fixed_int8.csv": "7f726ad4330dc4b144d35c7623edb76aa9c0da023990ff88dfe9c0fdd40c5c81",
+    "classifier_fixed_int4.csv": "f25d8fd3d6e17bf98136f39b75d04a8eaaaee83163e62b174ce37ffde69ff7b4",
+    "classifier_fixed_0.log": "a4bf15409ec167a6c45eebfa96ba4700532fe331ee620178b3b280454d127036",
+    "classifier_fixed_1.log": "6739c14771959194ef3aa0a270113aad247c5f992c4de1b374b9c5891a755b24",
+    "classifier_0.log": "41751e9e055275551473acb3b813c8d076e79bc8ed0712415e81d95c7ccfe1ba",
+    "classifier_1.log": "0d209bc7520e0d59d579e5791fba9168409b107ce54785667ccaf58860644810",
+    "classifier_sources.log": "be150b5233348cface02589333e4c8da7168fa30a1b37f079197997cf8298c1e",
+    "iverilog_version.log": "f9199cc8658f4afcec3edeb93f29f23bb2aebf66d3eeb217cdc728aaa692f946",
+    "yosys_version.log": "14022961a7564dcc908f30f8b52cc1289449e8f25a95ed5c2d2afb88c4bde4fa",
+    "verification.json": "8f2c9041feb34fe35cbfe03033468adb053ba9a7f3c7d6e69bd96a5b5e7de2f6"
+  }
+}

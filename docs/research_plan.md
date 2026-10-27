@@ -9,8 +9,9 @@ hardware does runtime support for both INT8 and INT4 require?
 The project compares fixed INT8, fixed two-lane INT4, a duplicated-unit mux, and
 a shared partial-product core. Arithmetic correctness is a prerequisite. Lower
 area, shorter inference time, and adequate INT4 accuracy are hypotheses, not
-promised outcomes. Precision is selected externally; this is configurable
-arithmetic, not automatic adaptation.
+promised outcomes. The original core captures an externally selected precision.
+The adaptive prototype adds a conservative agreement certificate and internally
+selects an INT8 rerun when INT4 cannot establish the same class decision.
 
 ## Milestones, completed as quickly as verification allows
 
@@ -37,8 +38,10 @@ Milestones 3-4 remain open.
 The [agreement study](agreement_study.md) adds a new question: can a hardware
 certificate preserve INT8 class decisions while reducing average cycles?
 The compact pairwise certificate fails the cycle-feasibility screen. A tighter
-[input-conditioned RTL prototype](adaptive.md) is undergoing verification.
-Its area and critical-path overhead must be counted. Calibration results are
+[input-conditioned RTL prototype](adaptive.md) passed calibration replay and
+generic synthesis. It saves average cycles with about 9.4x the generic logic
+of the matched INT8 baseline; see [the precision results](precision_results.md).
+Its mapped area and critical-path overhead still require measurement. Calibration results are
 not fresh test-set accuracy evidence; agreement is with INT8, not ground truth.
 
 ## Workload contract to freeze before measuring accuracy
@@ -55,8 +58,9 @@ dot products. This is a kernel study, not a complete CNN accelerator.
 - Specify scaling, clipping, rounding, bias handling, accumulator width, and padding.
 - Distinguish arithmetic verification (bit-exact integer results) from the
   model's prediction accuracy after quantization.
-- Host quantization is outside the RTL; bias addition and argmax are implemented
-  in Verilog. Count only implemented hardware operations in accelerator measurements.
+- The original interface uses host quantization; the raw-input adaptive engine
+  implements preprocessing LUTs in RTL. Bias addition and argmax are also in
+  Verilog. Count only implemented hardware operations in accelerator measurements.
 
 ## Fair comparisons
 

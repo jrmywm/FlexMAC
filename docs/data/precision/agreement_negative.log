@@ -1,0 +1,2 @@
+FATAL: tests/tb_agreement.v:56: certificate mismatch sample=182 candidate=0 competitor=0 adjustment=0
+       Time: 36830000  Scope: tb_agreement.frame

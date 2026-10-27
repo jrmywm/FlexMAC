@@ -1,0 +1,2 @@
+PASS agreement: 1437 training/calibration fixtures, 590 accepted, zero unsafe accepts, 180 threshold boundaries, invalid/mismatched candidates, 33-bit score differences, stalls and two reset cancellations; 1621 frames
+tests/tb_agreement.v:119: $finish called at 324330000 (1ps)

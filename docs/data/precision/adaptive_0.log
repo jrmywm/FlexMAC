@@ -1,0 +1,2 @@
+PASS adaptive impl=0 force_int8=0: 359 calibration images, accepted=351 fallback=8; exact INT8 decisions, class scores, interval containment, cycle counts, invalid pixels, reset and stalls
+tests/tb_adaptive.v:134: $finish called at 1504930000 (1ps)

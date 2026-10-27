@@ -1,5 +1,8 @@
 # Verified RTL classifier results
 
+Historical classifier milestone. See the later [precision-agreement results](precision_results.md)
+for complete fixed baselines, adaptive inference and current generic counts.
+
 [CI run 40447266654](https://github.com/jrmywm/FlexMAC/actions/runs/40447266654)
 passed at source `1cd283c2938b7d13cba5ac79f2f5237b6cc21055`.
 The frozen model and arithmetic contract are documented in [classifier.md](classifier.md).

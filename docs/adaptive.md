@@ -1,8 +1,10 @@
 # Input-conditioned adaptive classifier
 
 `rtl/flexmac_adaptive.v` implements the promising conditioned-bound candidate
-from [the feasibility study](agreement_study.md). Verification and synthesis are
-pending the next CI run. The compact pairwise checker remains a separate,
+from [the feasibility study](agreement_study.md). It passed RTL replay and generic
+synthesis in [CI run 40463259340](https://github.com/jrmywm/FlexMAC/actions/runs/40463259340).
+See [the results and substantial logic overhead](precision_results.md).
+The compact pairwise checker remains a separate,
 lower-cost candidate; it is not used by this adaptive engine.
 
 ## Algorithm and certificate
@@ -54,7 +56,7 @@ Invalid pixels presented with pixel-valid=0 are ignored. The output remains
 stable until consumed; input and command ready remain low during computation
 and output backpressure.
 
-Expected command-acceptance to result-valid, with no input gaps:
+Verified command-acceptance to result-valid, with no input gaps:
 
 | Path | Load | INT4 | Check | INT8 | Total cycles |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -63,7 +65,7 @@ Expected command-acceptance to result-valid, with no input gaps:
 | Always-INT8 raw-input baseline | 64 | 0 | 0 | 640 | 704 |
 | Invalid frame | 64 | 0 | 0 | 0 | 64 |
 
-These are implementation contracts until confirmed by simulation. Input gaps
+These counts passed simulation checks. Input gaps
 add cycles; output-consumption stalls occur after result-valid and are excluded.
 Elapsed time and energy require physical timing and power evidence.
 

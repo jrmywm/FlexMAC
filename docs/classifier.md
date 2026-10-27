@@ -1,5 +1,9 @@
 # Frozen digit-classifier workload
 
+This document describes the original quantized-feature interface and shared
+frozen models. The later [adaptive engine](adaptive.md) adds raw-input
+preprocessing, a certificate and an INT8 rerun; see [current results](precision_results.md).
+
 ## Purpose and boundary
 
 This workload tests whether the precision-configurable core is useful for an
@@ -10,7 +14,9 @@ All scoring, accumulation, bias addition and class selection execute in
 
 The host converts raw pixels to quantized features and packs input bytes. Offline
 Python fits the model and exports ROM constants and reference fixtures. Neither
-training nor input normalization/quantization is implemented in hardware.
+training nor input normalization/quantization is implemented in this original
+interface. The later adaptive engine implements the frozen input quantization
+using Verilog LUTs.
 The Verilog testbench reads frozen files and drives the RTL directly; normal
 verification does not import NumPy or scikit-learn.
 

@@ -11,8 +11,9 @@ cycles against 640 for always-INT8, before checking or loading overhead. It is
 therefore a verified candidate block to evaluate, not a demonstrated accelerator.
 
 An input-conditioned alternative accepts 351/359 calibration inputs (97.77%) in
-the offline study. It now has an [adaptive RTL prototype](adaptive.md), pending
-CI verification and cost measurement. The direct residual-table
+the offline study. The [adaptive RTL prototype](adaptive.md) now reproduces that
+result in CI. It costs about 9.4x the generic logic of a matched always-INT8
+baseline; see [the verified results](precision_results.md). The direct residual-table
 representation has 19,200 scalar entries; that is a representation size, not a
 lower bound on circuit area. The prototype deliberately makes the certificate's
 cost explicit so it can be measured against an always-INT8 raw-input baseline.
@@ -96,7 +97,7 @@ inference latency, accuracy, mapped area or energy claim is made.
 | --- | ---: | ---: | --- |
 | Separate global class intervals | 84 (7.79%) | 31 (8.64%) | Offline screening only |
 | Constant pairwise thresholds | 456 (42.30%) | 134 (37.33%) | Standalone RTL checker |
-| Input-conditioned class intervals | 1,070 (99.26%) | 351 (97.77%) | Adaptive RTL prototype; CI pending |
+| Input-conditioned class intervals | 1,070 (99.26%) | 351 (97.77%) | Verified adaptive RTL on calibration |
 
 No accepted decision disagrees with INT8 on these samples. This observed check
 is separate from the domain-wide mathematical bound. Bounds are not a guarantee
