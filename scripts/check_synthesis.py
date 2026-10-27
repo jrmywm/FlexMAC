@@ -26,7 +26,10 @@ def main():
                ('classifier_mux','flexmac_classifier',1),
                ('classifier_fixed_int8','flexmac_classifier_int8',None),
                ('classifier_fixed_int4','flexmac_classifier_int4',None),
-               ('agreement_pairwise','flexmac_agreement',None)]
+               ('agreement_pairwise','flexmac_agreement',None),
+               ('adaptive_shared','flexmac_adaptive',0),
+               ('adaptive_mux','flexmac_adaptive',1),
+               ('adaptive_always_int8','flexmac_adaptive',2)]
     rows = []
     for name,top,impl in designs:
         # Preserve the original source set for the six arithmetic experiments.
@@ -35,16 +38,22 @@ def main():
         sources = 'rtl/flexmac_product.v rtl/flexmac_baselines.v rtl/flexmac_stream.v'
         if top == 'flexmac_agreement':
             sources = 'rtl/flexmac_agreement.v rtl/digits_agreement_bounds.v'
+        if top == 'flexmac_adaptive':
+            sources = ('rtl/flexmac_product.v rtl/flexmac_baselines.v rtl/digits_model_rom.v '
+                       'rtl/digits_residual_rom.v rtl/digits_pixel_quantizer.v rtl/flexmac_adaptive.v')
         if top.startswith('flexmac_classifier'):
             sources += ' rtl/digits_model_rom.v rtl/flexmac_classifier.v'
         if top in ('flexmac_classifier_int8', 'flexmac_classifier_int4'):
             sources += ' rtl/flexmac_classifier_fixed.v'
         commands = f'read_verilog {sources}; '
         if impl is not None:
-            commands += f'chparam -set PRODUCT_IMPL {impl} {top}; '
+            if top == 'flexmac_adaptive' and impl == 2:
+                commands += f'chparam -set FORCE_INT8 1 {top}; '
+            else:
+                commands += f'chparam -set PRODUCT_IMPL {impl} {top}; '
         commands += f'synth -top {top} -flatten -noabc; check -assert; write_json build/{name}.json'
         subprocess.run(['yosys','-Q','-l',str(BUILD/f'synthesis_{name}.log'),'-p',commands],
-                       cwd=ROOT,check=True,stdout=subprocess.DEVNULL,timeout=120)
+                       cwd=ROOT,check=True,stdout=subprocess.DEVNULL,timeout=240 if top == 'flexmac_adaptive' else 120)
         module = json.loads((BUILD/f'{name}.json').read_text())[ 'modules'][top]
         types = [c['type'] for c in module['cells'].values()]
         assert all(t.startswith('$_') for t in types), (name,'Unmapped cells')

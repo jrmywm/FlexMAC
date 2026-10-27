@@ -45,12 +45,16 @@ Generic counts alone establish none of those claims.
 ## Precision-fallback investigation
 
 Complete fixed-INT8 and fixed-INT4 classifier baselines and a standalone
-conservative INT4/INT8 agreement checker have been added; their CI verification
-is pending. The frozen training/calibration study finds a real limitation:
+conservative INT4/INT8 agreement checker passed CI. The frozen
+training/calibration study finds a real limitation:
 the compact checker accepts only 134/359 calibration inputs, so serial fallback
 would be slower than always-INT8. Tighter input-dependent bounds accept 351/359
-offline, with hardware cost still unresolved. No adaptive speedup is claimed.
+offline. An adaptive RTL prototype now computes those bounds and reruns INT8
+when needed, alongside an always-INT8 raw-input baseline; its CI verification
+and hardware-cost results are pending. No adaptive speedup is claimed.
 See [the agreement derivation and feasibility study](docs/agreement_study.md).
+The [adaptive hardware contract](docs/adaptive.md) explains input preservation,
+on-chip preprocessing, certification and fallback.
 
 ## Run the checks
 
@@ -67,6 +71,7 @@ python scripts/check_rtl.py
 python scripts/check_synthesis.py
 bash scripts/check_classifier.sh
 bash scripts/check_agreement.sh
+bash scripts/check_adaptive.sh
 ```
 
 The RTL script generates 65,536 operand pairs per mode, tests both stream

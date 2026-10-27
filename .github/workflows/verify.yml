@@ -26,6 +26,8 @@ jobs:
         run: bash scripts/check_classifier.sh
       - name: Conservative agreement checker and threshold fault control
         run: bash scripts/check_agreement.sh
+      - name: Adaptive raw-pixel classifier and always-INT8 baseline
+        run: bash scripts/check_adaptive.sh
       - name: Generic synthesis of cores and engines
         run: python scripts/check_synthesis.py
       - name: Record tool versions and source history

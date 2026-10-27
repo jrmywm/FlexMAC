@@ -9,6 +9,25 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class CertificationTests(unittest.TestCase):
+    def test_conditioned_rom_exact(self):
+        import re
+        from model.certification import signed
+        models = read_models((ROOT/'rtl/digits_model_rom.v').read_text(encoding='utf-8'))
+        _, residual, offset = derive_bounds(*models, 366)
+        rom = (ROOT/'rtl/digits_residual_rom.v').read_text(encoding='utf-8')
+        entries = {int(k,16):int(v,16) for k,v in re.findall(r"14'h([0-9a-f]+): range_bits = 26'h([0-9a-f]+)",rom)}
+        self.assertEqual(len(entries),9600)
+        q4 = quantized_pixels(4)
+        for c in range(10):
+            for i in range(64):
+                for v in range(-7,8):
+                    value=entries[c*1024+i*16+(v&15)]
+                    possible=[residual[c][i][p] for p in range(17) if q4[p]==v]
+                    self.assertEqual((signed(value>>13,13),signed(value&8191,13)),(min(possible),max(possible)))
+        biases={int(k):signed(int(v,16),32) for k,v in re.findall(r"4'd(\d+): bias = 32'h([0-9a-f]+)",rom)}
+        self.assertEqual([biases[c] for c in range(10)],offset)
+        self.assertLess(max(map(abs,offset))+64*4096+366*600,2**31)
+
     def test_frozen_derivation_and_integrity(self):
         report = json.loads((ROOT / 'model/agreement/feasibility.json').read_text(encoding='utf-8'))
         for group in ('source_sha256', 'fixture_sha256'):

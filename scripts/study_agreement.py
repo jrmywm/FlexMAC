@@ -48,6 +48,7 @@ def main():
               'conditioned_conservative_signed_bits_per_entry':
                   int(max(abs(condition_low).max(), abs(condition_high).max())).bit_length()+1}
     fixtures, expected, winners, reference = [], [], [], []
+    pixel_fixtures, scores8_fixtures, expected_conditioned = [], [], []
     rows = []
     for split in ('train', 'calibration'):
         indices = metadata['split_indices'][split]
@@ -77,6 +78,8 @@ def main():
                 false_accepts[name] += int(accepted and winner != exact_winner)
             fixtures.extend(score); expected.append(int(checks['pairwise']))
             winners.append(winner); reference.append(exact_winner)
+            pixel_fixtures.extend(pixels[n]); scores8_fixtures.extend(scores8[n])
+            expected_conditioned.append(int(checks['conditioned']))
             rows.append({'split': split, 'dataset_index': sample, 'int4_class': winner, 'int8_class': exact_winner,
                          **{name: int(value) for name, value in checks.items()}})
         assert not any(false_accepts.values())
@@ -89,6 +92,41 @@ def main():
     hex_file('winner_int4.hex', winners, 8)
     hex_file('reference_int8.hex', reference, 8)
     hex_file('thresholds.hex', [v for row in bounds['thresholds'] for v in row], 32)
+    hex_file('raw_pixels.hex', pixel_fixtures, 8)
+    hex_file('scores_int8.hex', scores8_fixtures, 32)
+    hex_file('expected_conditioned.hex', expected_conditioned, 8)
+    residual_cases = []
+    for c in range(10):
+        for i in range(64):
+            for v in range(-7, 8):
+                lo, hi = int(condition_low[c,i,v+7]), int(condition_high[c,i,v+7])
+                assert -4096 <= lo <= hi <= 4095
+                value = ((lo & 8191) << 13) | (hi & 8191)
+                residual_cases.append(f"            14'h{c*1024+i*16+(v&15):04x}: range_bits = 26'h{value:07x};")
+    write_text(ROOT / 'rtl/digits_residual_rom.v', '''// Generated exact conditioned residual ranges. No empirical extrema.
+module digits_residual_rom(input wire [3:0] class_index, input wire [5:0] feature_index,
+    input wire [3:0] quantized_pixel, output wire signed [12:0] lower, upper);
+    reg [25:0] range_bits;
+    assign lower = range_bits[25:13];
+    assign upper = range_bits[12:0];
+    always @* begin
+        range_bits = {13'h1000, 13'h0fff};
+        case ({class_index, feature_index, quantized_pixel})
+'''+'\n'.join(residual_cases)+'''
+            default: range_bits = {13'h1000, 13'h0fff};
+        endcase
+    end
+endmodule
+module digits_residual_bias(input wire [3:0] class_index, output reg signed [31:0] bias);
+    always @* begin
+        bias = 0;
+        case (class_index)
+'''+ '\n'.join(f"            4'd{c}: bias = 32'h{int(offset[c]) & 0xffffffff:08x};" for c in range(10))+'''
+            default: bias = 0;
+        endcase
+    end
+endmodule
+''')
     cases = [f"            8'h{c*16+j:02x}: threshold = 32'h{bounds['thresholds'][c][j] & 0xffffffff:08x};"
              for c in range(10) for j in range(10)]
     write_text(ROOT / 'rtl/digits_agreement_bounds.v', '''// Generated from exact raw-pixel-domain bounds by scripts/study_agreement.py.
@@ -107,7 +145,8 @@ endmodule
         writer = csv.DictWriter(f, fieldnames=rows[0].keys(), lineterminator='\n')
         writer.writeheader(); writer.writerows(rows)
     report['fixture_sha256'] = {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
-                               for p in sorted(OUT.glob('*.hex')) + [ROOT / 'rtl/digits_agreement_bounds.v', OUT / 'feasibility.csv']}
+                               for p in sorted(OUT.glob('*.hex')) + [ROOT / 'rtl/digits_agreement_bounds.v',
+                                                                    ROOT / 'rtl/digits_residual_rom.v', OUT / 'feasibility.csv']}
     write_text(OUT / 'feasibility.json', json.dumps(report, indent=2) + '\n')
     print(json.dumps({'multiplier': multiplier, 'splits': report['splits'],
                       'conditioned_table_entries': report['conditioned_residual_table_entries']}, indent=2))

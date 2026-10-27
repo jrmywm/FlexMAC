@@ -11,10 +11,11 @@ cycles against 640 for always-INT8, before checking or loading overhead. It is
 therefore a verified candidate block to evaluate, not a demonstrated accelerator.
 
 An input-conditioned alternative accepts 351/359 calibration inputs (97.77%) in
-the offline study. Its hardware cost is unresolved. The direct residual-table
+the offline study. It now has an [adaptive RTL prototype](adaptive.md), pending
+CI verification and cost measurement. The direct residual-table
 representation has 19,200 scalar entries; that is a representation size, not a
-lower bound on circuit area. A compact realization must be investigated before
-integrating a full adaptive controller.
+lower bound on circuit area. The prototype deliberately makes the certificate's
+cost explicit so it can be measured against an always-INT8 raw-input baseline.
 
 The original floating/INT8/INT4 models, quantization settings and split remain
 unchanged. This study uses training and calibration samples only. It does not
@@ -95,7 +96,7 @@ inference latency, accuracy, mapped area or energy claim is made.
 | --- | ---: | ---: | --- |
 | Separate global class intervals | 84 (7.79%) | 31 (8.64%) | Offline screening only |
 | Constant pairwise thresholds | 456 (42.30%) | 134 (37.33%) | Standalone RTL checker |
-| Input-conditioned class intervals | 1,070 (99.26%) | 351 (97.77%) | Offline screening only |
+| Input-conditioned class intervals | 1,070 (99.26%) | 351 (97.77%) | Adaptive RTL prototype; CI pending |
 
 No accepted decision disagrees with INT8 on these samples. This observed check
 is separate from the domain-wide mathematical bound. Bounds are not a guarantee
@@ -149,9 +150,10 @@ from `model/requirements.txt` and run `python scripts/study_agreement.py`.
 `model/agreement/feasibility.json` records source/fixture hashes and the exact
 thresholds. Do not run `export_digits.py` to change or retrain the frozen models.
 
-Next decision: assess a compact input-conditioned bound architecture and its
-actual hardware cost. The current compact checker does not justify a full
-fallback controller for speed. Library mapping is still required for physical
+The next prototype uses input-conditioned bounds because the compact checker
+does not justify serial fallback for speed. Measure its actual hardware cost
+alongside its cycle behavior; see [adaptive.md](adaptive.md).
+Library mapping is still required for physical
 area and timing; generic cells alone cannot decide the final tradeoff.
 
 Certified quantization and precision refinement have prior art; this is not a
