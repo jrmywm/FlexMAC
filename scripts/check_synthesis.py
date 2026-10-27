@@ -26,8 +26,13 @@ def main():
                ('classifier_mux','flexmac_classifier',1)]
     rows = []
     for name,top,impl in designs:
-        commands = ('read_verilog rtl/flexmac_product.v rtl/flexmac_baselines.v '
-                    'rtl/flexmac_stream.v rtl/digits_model_rom.v rtl/flexmac_classifier.v; ')
+        # Preserve the original source set for the six arithmetic experiments.
+        # Reading unrelated modules can perturb generic optimization ordering;
+        # classifier additions must not silently redefine those comparisons.
+        sources = 'rtl/flexmac_product.v rtl/flexmac_baselines.v rtl/flexmac_stream.v'
+        if top == 'flexmac_classifier':
+            sources += ' rtl/digits_model_rom.v rtl/flexmac_classifier.v'
+        commands = f'read_verilog {sources}; '
         if impl is not None:
             commands += f'chparam -set PRODUCT_IMPL {impl} {top}; '
         commands += f'synth -top {top} -flatten -noabc; check -assert; write_json build/{name}.json'
