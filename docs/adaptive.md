@@ -75,13 +75,17 @@ instantiates the fixed INT8 product and omits the residual ROM. Unused adaptive
 control/storage is eligible for synthesis removal. `PRODUCT_IMPL=0` selects the
 shared configurable product for the adaptive engine; 1 selects the mux baseline.
 
-The residual ROM has 9,600 input combinations with two 13-bit values each:
+The residual ROM has 9,600 used input combinations with two 13-bit values each:
 249,600 logical data bits before logic synthesis. The design reads two entries
 per INT4 cycle and also has residual accumulators, ten lower/upper interval
 register pairs, constant score scaling and a ten-cycle checker. The lookup table
 is an initial implementation, not a claim of minimal cost. These resources can
 outweigh the saved average cycles. Report both full-engine cost and latency;
 do not treat the certificate as free or equate logical ROM bits with silicon area.
+The ROM is initialized from the frozen `model/agreement/residual_ranges.hex`;
+the complete 14-bit address space includes conservative defaults for unused
+addresses. Yosys must map this constant ROM into elementary logic in the generic
+flow. Normal simulation reads the same constant table directly.
 
 ## Validation boundary
 

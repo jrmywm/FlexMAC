@@ -318,12 +318,13 @@
     "model/agreement/expected_pairwise.hex": "c5545f8335c1cd61ac27e104d867121a25493bf1d48f09d5ac196e8521a642d8",
     "model/agreement/raw_pixels.hex": "14e69b4c825aa82bc20968f8ab7c4deb3282cc34abac3cddd5dd308dc9f6303b",
     "model/agreement/reference_int8.hex": "96936abc6e575f0fc5eb9a0d2e3547283725308b6a01ce2022ad66da046d7e60",
+    "model/agreement/residual_ranges.hex": "27842679fabbc5181a8f90af523665a1e21c08635e9ccad7a7dc20f47b841afa",
     "model/agreement/scores_int4.hex": "82bbc4bd5d52778f016d19b6393689890e24d58c26abaf2cb5b1852ea060b1a2",
     "model/agreement/scores_int8.hex": "ab2d1435c872b4e96f83f961cfbe172d5e572c72513c80cacffbb7ea314faa45",
     "model/agreement/thresholds.hex": "1f28b81225d6a974fef2531417989de8621732f93587b026950068a0502b726f",
     "model/agreement/winner_int4.hex": "a218940881f5a48d8b6d697393db12d58e9d9187e17b785d041dece2ccd96983",
     "rtl/digits_agreement_bounds.v": "6e5e2b74ab417112bc2fbea69fc83b708e288fc70fa8afa3afaf557f323a8730",
-    "rtl/digits_residual_rom.v": "c97ec7fd01448e1a51f1040adf15f57aac87f2aeab94d89cb02f4f11321c42cc",
+    "rtl/digits_residual_rom.v": "9d050372f78d3b15f0139153d5d3719046afddaa346eb1fea12fcd374c00e49c",
     "model/agreement/feasibility.csv": "ef815676f9f9336edc40fa0d9d55403f22fdfd05fe7d7936ab1200bf98b0800f"
   }
 }

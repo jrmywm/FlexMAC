@@ -95,27 +95,23 @@ def main():
     hex_file('raw_pixels.hex', pixel_fixtures, 8)
     hex_file('scores_int8.hex', scores8_fixtures, 32)
     hex_file('expected_conditioned.hex', expected_conditioned, 8)
-    residual_cases = []
+    residual_values = [((4096 << 13) | 4095)] * 16384
     for c in range(10):
         for i in range(64):
             for v in range(-7, 8):
                 lo, hi = int(condition_low[c,i,v+7]), int(condition_high[c,i,v+7])
                 assert -4096 <= lo <= hi <= 4095
                 value = ((lo & 8191) << 13) | (hi & 8191)
-                residual_cases.append(f"            14'h{c*1024+i*16+(v&15):04x}: range_bits = 26'h{value:07x};")
+                residual_values[c*1024+i*16+(v&15)] = value
+    hex_file('residual_ranges.hex', residual_values, 28)
     write_text(ROOT / 'rtl/digits_residual_rom.v', '''// Generated exact conditioned residual ranges. No empirical extrema.
 module digits_residual_rom(input wire [3:0] class_index, input wire [5:0] feature_index,
     input wire [3:0] quantized_pixel, output wire signed [12:0] lower, upper);
-    reg [25:0] range_bits;
+    reg [25:0] ranges [0:16383];
+    initial $readmemh("model/agreement/residual_ranges.hex", ranges);
+    wire [25:0] range_bits = ranges[{class_index, feature_index, quantized_pixel}];
     assign lower = range_bits[25:13];
     assign upper = range_bits[12:0];
-    always @* begin
-        range_bits = {13'h1000, 13'h0fff};
-        case ({class_index, feature_index, quantized_pixel})
-'''+'\n'.join(residual_cases)+'''
-            default: range_bits = {13'h1000, 13'h0fff};
-        endcase
-    end
 endmodule
 module digits_residual_bias(input wire [3:0] class_index, output reg signed [31:0] bias);
     always @* begin

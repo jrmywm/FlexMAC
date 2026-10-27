@@ -15,8 +15,9 @@ class CertificationTests(unittest.TestCase):
         models = read_models((ROOT/'rtl/digits_model_rom.v').read_text(encoding='utf-8'))
         _, residual, offset = derive_bounds(*models, 366)
         rom = (ROOT/'rtl/digits_residual_rom.v').read_text(encoding='utf-8')
-        entries = {int(k,16):int(v,16) for k,v in re.findall(r"14'h([0-9a-f]+): range_bits = 26'h([0-9a-f]+)",rom)}
-        self.assertEqual(len(entries),9600)
+        entries = [int(v,16) for v in (ROOT/'model/agreement/residual_ranges.hex').read_text().splitlines()]
+        self.assertEqual(len(entries),16384)
+        self.assertIn('$readmemh("model/agreement/residual_ranges.hex", ranges)',rom)
         q4 = quantized_pixels(4)
         for c in range(10):
             for i in range(64):
@@ -26,6 +27,9 @@ class CertificationTests(unittest.TestCase):
                     self.assertEqual((signed(value>>13,13),signed(value&8191,13)),(min(possible),max(possible)))
         biases={int(k):signed(int(v,16),32) for k,v in re.findall(r"4'd(\d+): bias = 32'h([0-9a-f]+)",rom)}
         self.assertEqual([biases[c] for c in range(10)],offset)
+        legal={c*1024+i*16+(v&15) for c in range(10) for i in range(64) for v in range(-7,8)}
+        for address in set(range(16384))-legal:
+            self.assertEqual(entries[address],(4096<<13)|4095)
         self.assertLess(max(map(abs,offset))+64*4096+366*600,2**31)
 
     def test_frozen_derivation_and_integrity(self):
