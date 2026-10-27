@@ -1,0 +1,325 @@
+{
+  "scope": "training and calibration only; no held-out test evaluation",
+  "domain": "64 independent raw integer pixels in [0,16], exact frozen preprocessing",
+  "bounds": {
+    "multiplier": 366,
+    "class_lower": [
+      -34959,
+      -40025,
+      -38746,
+      -36202,
+      -36550,
+      -39611,
+      -34379,
+      -34369,
+      -37958,
+      -40570
+    ],
+    "class_upper": [
+      35015,
+      40073,
+      38562,
+      36568,
+      36562,
+      39815,
+      34393,
+      34489,
+      37658,
+      40234
+    ],
+    "pair_lower": [
+      [
+        0,
+        -51424,
+        -50342,
+        -52158,
+        -47929,
+        -51843,
+        -42605,
+        -50748,
+        -43412,
+        -54079
+      ],
+      [
+        -51432,
+        0,
+        -56513,
+        -56103,
+        -48295,
+        -61609,
+        -44822,
+        -50854,
+        -56179,
+        -51015
+      ],
+      [
+        -50582,
+        -56745,
+        0,
+        -50294,
+        -56025,
+        -60547,
+        -48904,
+        -57155,
+        -56121,
+        -56325
+      ],
+      [
+        -51848,
+        -55785,
+        -49744,
+        0,
+        -51680,
+        -47704,
+        -46664,
+        -52463,
+        -55516,
+        -54299
+      ],
+      [
+        -47973,
+        -48331,
+        -55829,
+        -52034,
+        0,
+        -57441,
+        -48416,
+        -48276,
+        -53266,
+        -54223
+      ],
+      [
+        -51695,
+        -61453,
+        -60159,
+        -47866,
+        -57249,
+        0,
+        -58639,
+        -52138,
+        -58529,
+        -55496
+      ],
+      [
+        -42647,
+        -44856,
+        -48706,
+        -47016,
+        -48414,
+        -58829,
+        0,
+        -52866,
+        -45972,
+        -57829
+      ],
+      [
+        -50684,
+        -50782,
+        -56851,
+        -52709,
+        -48168,
+        -52222,
+        -52760,
+        0,
+        -53367,
+        -46278
+      ],
+      [
+        -43768,
+        -56527,
+        -56237,
+        -56182,
+        -53578,
+        -59033,
+        -46286,
+        -53787,
+        0,
+        -52380
+      ],
+      [
+        -54471,
+        -51399,
+        -56477,
+        -55001,
+        -54571,
+        -56036,
+        -58179,
+        -46734,
+        -52416,
+        0
+      ]
+    ],
+    "thresholds": [
+      [
+        1,
+        141,
+        138,
+        143,
+        131,
+        142,
+        117,
+        139,
+        119,
+        148
+      ],
+      [
+        141,
+        1,
+        155,
+        154,
+        132,
+        169,
+        123,
+        139,
+        154,
+        140
+      ],
+      [
+        139,
+        156,
+        1,
+        138,
+        154,
+        166,
+        134,
+        157,
+        154,
+        154
+      ],
+      [
+        142,
+        153,
+        136,
+        1,
+        142,
+        131,
+        128,
+        144,
+        152,
+        149
+      ],
+      [
+        132,
+        133,
+        153,
+        143,
+        1,
+        157,
+        133,
+        132,
+        146,
+        149
+      ],
+      [
+        142,
+        168,
+        165,
+        131,
+        157,
+        1,
+        161,
+        143,
+        160,
+        152
+      ],
+      [
+        117,
+        123,
+        134,
+        129,
+        133,
+        161,
+        1,
+        145,
+        126,
+        159
+      ],
+      [
+        139,
+        139,
+        156,
+        145,
+        132,
+        143,
+        145,
+        1,
+        146,
+        127
+      ],
+      [
+        120,
+        155,
+        154,
+        154,
+        147,
+        162,
+        127,
+        147,
+        1,
+        144
+      ],
+      [
+        149,
+        141,
+        155,
+        151,
+        150,
+        154,
+        159,
+        128,
+        144,
+        1
+      ]
+    ]
+  },
+  "splits": {
+    "train": {
+      "samples": 1078,
+      "accepted": {
+        "global": 84,
+        "pairwise": 456,
+        "conditioned": 1070
+      },
+      "false_accepts": {
+        "global": 0,
+        "pairwise": 0,
+        "conditioned": 0
+      },
+      "pairwise_mean_compute_cycles_before_checker": 689.2764378478664,
+      "pairwise_optimistic_mean_cycles": 763.2764378478664,
+      "conditioned_mean_compute_cycles_excluding_bound_hardware": 324.74953617810763
+    },
+    "calibration": {
+      "samples": 359,
+      "accepted": {
+        "global": 31,
+        "pairwise": 134,
+        "conditioned": 351
+      },
+      "false_accepts": {
+        "global": 0,
+        "pairwise": 0,
+        "conditioned": 0
+      },
+      "pairwise_mean_compute_cycles_before_checker": 721.1142061281337,
+      "pairwise_optimistic_mean_cycles": 795.1142061281337,
+      "conditioned_mean_compute_cycles_excluding_bound_hardware": 334.26183844011143
+    }
+  },
+  "checker_cycles_assumption": 10,
+  "source_sha256": {
+    "rtl/digits_model_rom.v": "341e18b39b3116beda1583d5867ecbedf688abe9ddd64e58b7663498d1c250fd",
+    "model/digits/metadata.json": "39d577de13c3ac5257b056519d0a8df922eb77fe9f384ada60afaef9973dd64b"
+  },
+  "conditioned_residual_table_entries": 19200,
+  "conditioned_conservative_signed_bits_per_entry": 13,
+  "fixture_sha256": {
+    "model/agreement/expected_pairwise.hex": "c5545f8335c1cd61ac27e104d867121a25493bf1d48f09d5ac196e8521a642d8",
+    "model/agreement/reference_int8.hex": "96936abc6e575f0fc5eb9a0d2e3547283725308b6a01ce2022ad66da046d7e60",
+    "model/agreement/scores_int4.hex": "82bbc4bd5d52778f016d19b6393689890e24d58c26abaf2cb5b1852ea060b1a2",
+    "model/agreement/thresholds.hex": "1f28b81225d6a974fef2531417989de8621732f93587b026950068a0502b726f",
+    "model/agreement/winner_int4.hex": "a218940881f5a48d8b6d697393db12d58e9d9187e17b785d041dece2ccd96983",
+    "rtl/digits_agreement_bounds.v": "6e5e2b74ab417112bc2fbea69fc83b708e288fc70fa8afa3afaf557f323a8730",
+    "model/agreement/feasibility.csv": "ef815676f9f9336edc40fa0d9d55403f22fdfd05fe7d7936ab1200bf98b0800f"
+  }
+}

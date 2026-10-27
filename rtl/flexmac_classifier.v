@@ -1,6 +1,8 @@
 // Fixed 64-feature, ten-class linear classifier. No host-side scoring/argmax.
 module flexmac_classifier #(
-    parameter PRODUCT_IMPL = 0
+    parameter PRODUCT_IMPL = 0,
+    // -1: runtime configurable; 0: fixed INT8; 1: fixed two-lane INT4.
+    parameter FIXED_MODE = -1
 ) (
     input wire clk,
     input wire rst,
@@ -18,26 +20,32 @@ module flexmac_classifier #(
     localparam IDLE = 2'd0, LOAD = 2'd1, EVALUATE = 2'd2, RESULT = 2'd3;
     reg [1:0] state;
     reg precision4;
+    wire use_int4 = FIXED_MODE < 0 ? precision4 : FIXED_MODE == 1;
     reg [5:0] index;
     reg [3:0] class_index;
     // Reset does not clear this bank. A complete new input is mandatory before
     // evaluation, including after reset, so stale entries are never consumed.
-    reg [7:0] features [0:63];
+    localparam FEATURE_BYTES = FIXED_MODE == 1 ? 32 : 64;
+    reg [7:0] features [0:FEATURE_BYTES-1];
     reg signed [31:0] accumulator;
     reg signed [31:0] best_score;
     reg [3:0] best_class;
-    wire last_index = precision4 ? index == 6'd31 : index == 6'd63;
-    wire [9:0] weight_address = precision4 ? {1'b0, class_index, index[4:0]} : {class_index, index};
+    wire last_index = use_int4 ? index == 6'd31 : index == 6'd63;
+    wire [9:0] weight_address = use_int4 ? {1'b0, class_index, index[4:0]} : {class_index, index};
     wire [3:0] bias_class = state == LOAD ? 4'd0 : class_index + 4'd1;
     wire [7:0] weight;
     wire signed [31:0] bias;
-    digits_model_rom model_rom(precision4, weight_address, bias_class, weight, bias);
+    digits_model_rom model_rom(use_int4, weight_address, bias_class, weight, bias);
     wire signed [15:0] product;
     generate
-        if (PRODUCT_IMPL == 0) begin : shared_core
-            flexmac_product core(features[index], weight, precision4, product);
+        if (FIXED_MODE == 0) begin : fixed_int8
+            flexmac_product_int8 core(features[index], weight, product);
+        end else if (FIXED_MODE == 1) begin : fixed_int4
+            flexmac_product_int4x2 core(features[index], weight, product);
+        end else if (PRODUCT_IMPL == 0) begin : shared_core
+            flexmac_product core(features[index], weight, use_int4, product);
         end else begin : mux_core
-            flexmac_product_mux core(features[index], weight, precision4, product);
+            flexmac_product_mux core(features[index], weight, use_int4, product);
         end
     endgenerate
     // Exposed hierarchically to the testbench: no debug output registers.

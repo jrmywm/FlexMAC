@@ -23,15 +23,22 @@ def main():
                ('stream_shared','flexmac_stream',0),
                ('stream_mux','flexmac_stream',1),
                ('classifier_shared','flexmac_classifier',0),
-               ('classifier_mux','flexmac_classifier',1)]
+               ('classifier_mux','flexmac_classifier',1),
+               ('classifier_fixed_int8','flexmac_classifier_int8',None),
+               ('classifier_fixed_int4','flexmac_classifier_int4',None),
+               ('agreement_pairwise','flexmac_agreement',None)]
     rows = []
     for name,top,impl in designs:
         # Preserve the original source set for the six arithmetic experiments.
         # Reading unrelated modules can perturb generic optimization ordering;
         # classifier additions must not silently redefine those comparisons.
         sources = 'rtl/flexmac_product.v rtl/flexmac_baselines.v rtl/flexmac_stream.v'
-        if top == 'flexmac_classifier':
+        if top == 'flexmac_agreement':
+            sources = 'rtl/flexmac_agreement.v rtl/digits_agreement_bounds.v'
+        if top.startswith('flexmac_classifier'):
             sources += ' rtl/digits_model_rom.v rtl/flexmac_classifier.v'
+        if top in ('flexmac_classifier_int8', 'flexmac_classifier_int4'):
+            sources += ' rtl/flexmac_classifier_fixed.v'
         commands = f'read_verilog {sources}; '
         if impl is not None:
             commands += f'chparam -set PRODUCT_IMPL {impl} {top}; '

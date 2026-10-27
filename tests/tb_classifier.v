@@ -1,6 +1,7 @@
 `timescale 1ns/1ps
 module tb_classifier;
     parameter PRODUCT_IMPL = 0;
+    parameter FIXED_MODE = -1;
     localparam N = 360;
     reg clk = 0;
     always #5 clk = !clk;
@@ -9,7 +10,7 @@ module tb_classifier;
     wire start_ready, feature_ready, result_valid;
     wire [3:0] result_class;
     wire signed [31:0] result_score;
-    flexmac_classifier #(.PRODUCT_IMPL(PRODUCT_IMPL)) dut(
+    flexmac_classifier #(.PRODUCT_IMPL(PRODUCT_IMPL), .FIXED_MODE(FIXED_MODE)) dut(
         clk, rst, start_valid, start_ready, mode4, feature_valid,
         feature_ready, feature_data, result_valid, result_ready, result_class, result_score);
     reg [7:0] features8 [0:N*64-1], features4 [0:N*32-1];
@@ -114,13 +115,15 @@ module tb_classifier;
         $readmemh("model/digits/float_predictions.hex", floating);
         // Keep strings separate: packed conditional strings of unequal length
         // are not portable across Icarus versions.
-        if (PRODUCT_IMPL == 0) file_out = $fopen("build/classifier_shared.csv", "w");
+        if (FIXED_MODE == 0) file_out = $fopen("build/classifier_fixed_int8.csv", "w");
+        else if (FIXED_MODE == 1) file_out = $fopen("build/classifier_fixed_int4.csv", "w");
+        else if (PRODUCT_IMPL == 0) file_out = $fopen("build/classifier_shared.csv", "w");
         else file_out = $fopen("build/classifier_mux.csv", "w");
         if (!file_out) $fatal(1, "cannot open report");
         $fdisplay(file_out, "implementation,bits,sample,label,prediction,score,command_to_valid_cycles,evaluation_cycles");
         reset_engine;
         // Abort a partially loaded frame, a running evaluation and a pending output.
-        for (m = 0; m < 2; m = m + 1) begin
+        for (m = 0; m < 2; m = m + 1) if (FIXED_MODE < 0 || FIXED_MODE == m) begin
             begin_command(m);
             feature_valid = 1; feature_data = 8'h88;
             repeat (5) @(negedge clk);
@@ -140,12 +143,13 @@ module tb_classifier;
         end
         for (i = 0; i < N; i = i + 1) begin
             if (floating[i] == labels[i]) correct_float = correct_float + 1;
-            infer(i, 0, i % 11 == 0);
-            infer(i, 1, i % 11 == 0);
+            if (FIXED_MODE != 1) infer(i, 0, i % 11 == 0);
+            if (FIXED_MODE != 0) infer(i, 1, i % 11 == 0);
         end
         $fclose(file_out);
-        $display("PASS classifier impl=%0d: %0d images/mode, %0d class scores, float=%0d INT8=%0d INT4=%0d correct; six reset cancellations",
-            PRODUCT_IMPL, N, N*20, correct_float, correct8, correct4);
+        $display("PASS classifier impl=%0d fixed_mode=%0d: %0d images/mode, %0d class scores, float=%0d INT8=%0d INT4=%0d correct; %0d reset cancellations",
+            PRODUCT_IMPL, FIXED_MODE, N, N*(FIXED_MODE < 0 ? 20 : 10), correct_float, correct8, correct4,
+            FIXED_MODE < 0 ? 6 : 3);
         $finish;
     end
     initial begin
