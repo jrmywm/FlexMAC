@@ -36,6 +36,10 @@ passing period, for about **1.5% more cell area**. It adds ten cycles per image;
 at a common 15 ns clock the original baseline is faster. Full 359-image mapped
 replay passes in both two-state and four-state simulators for both designs.
 
+The [illustrated architecture guide](docs/architecture.md) explains the
+before/after datapath, controller states, arithmetic widths and the 384-to-394
+cycle schedule, with PNG drawings, SVG exports and editable Mermaid diagrams.
+
 ## Current implementation
 
 - A shared partial-product core: one signed INT8 product, or two signed INT4

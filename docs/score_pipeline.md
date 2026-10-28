@@ -1,5 +1,8 @@
 # Score-comparison pipeline experiment
 
+See the [illustrated architecture guide](architecture.md) for the before/after
+datapath, controller state diagram and a full-frame and class-boundary timeline.
+
 The two-lane INT8 baseline computes the completed class score and compares it
 with the stored best score in the same clock cycle. The saved mapped timing
 path starts at `index[2]` and ends at `best_score[0]`, passing through accumulator

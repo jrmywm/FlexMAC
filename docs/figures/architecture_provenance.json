@@ -1,0 +1,18 @@
+{
+  "scope": "Manually authored conceptual RTL diagrams and illustrative cycle schedule; not extracted schematics or captured waveforms",
+  "matplotlib": "3.10.7",
+  "source_sha256": {
+    "rtl/flexmac_adaptive.v": "8bd3b7725ef7b3ebb5bd9f52a7c64371e936ffaf2b90d863107cd9c76074109d",
+    "rtl/flexmac_int8x2_scorepipe.v": "904b6a038c9f79e6b1a487251458a59f9d6483db50361fd78e52b9fd8a9dcf2d",
+    "tests/tb_scorepipe.v": "34c19b7421732ee0d7929c546b9cc12e452ae1f0025f207d40839a493516c428",
+    "scripts/draw_architecture.py": "5c7bc9df0418a6eb68cc8541bb36bcdb9f045999ce869605a9d36b85a3858257"
+  },
+  "figure_sha256": {
+    "scorepipe_datapath.png": "e66eac8c9ca204c3428dbe89bc4f1d3fc18071adaf8cc01fc5eb9e75e655122f",
+    "scorepipe_datapath.svg": "30b1eb6041f86a7202becbce6eda2898edd0bc1dfa17b95ae07cd4d11e15b83c",
+    "scorepipe_controller.png": "80f15afc3bd6367f96925cf6daf7be428977c6297a2514609337af256a60794f",
+    "scorepipe_controller.svg": "cdeddd167ee7827f21a44503c73a69e3e6127c48208be6bf4bb4571d39f01072",
+    "scorepipe_timeline.png": "bf1448aa48fd0f05ef8ece92359eaf0a3b46866894608e8d85834c845d33a4ef",
+    "scorepipe_timeline.svg": "bb9e1135c573404d921f15d52d43fb05007a06d7593d72b241b857ec4ff76994"
+  }
+}
