@@ -54,9 +54,11 @@ reference. The subsequent frozen-architecture mapped study finds that two-lane
 INT8 retains its advantage: 30,006 µm² and 5.220 µs mean latency at its tested
 passing period, versus about 168,000 µm² and 6.95-7.02 µs for adaptive. The
 current design decision is to choose ordinary two-lane INT8 for this workload.
-An optional future experiment would test whether a pipelined two-lane engine
-improves useful-work latency after counting its extra registers and cycles.
-That experiment is outside this completed comparison; no improvement is assumed.
+The later [score-comparison pipeline experiment](score_pipeline.md) tests a
+specific timing bottleneck: accumulation followed by class comparison. It adds
+ten cycles but reduces elapsed latency by 14.8% at each design's tested passing
+period, for about 1.5% additional cell area. The report also shows the 2.6%
+latency penalty at a common clock and records full mapped replay coverage.
 
 ## Workload contract to freeze before measuring accuracy
 

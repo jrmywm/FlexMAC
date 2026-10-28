@@ -1,0 +1,18 @@
+GATE_PROGRESS reset_complete time=31000
+GATE_PROGRESS reset_complete time=151000
+GATE_PROGRESS reset_complete time=1031000
+GATE_PROGRESS reset_complete time=4921000
+GATE_PROGRESS frame=0 sample=1078 time=6320000
+GATE_PROGRESS frame=32 sample=1110 time=131420000
+GATE_PROGRESS frame=64 sample=1142 time=256520000
+GATE_PROGRESS frame=96 sample=1174 time=381620000
+GATE_PROGRESS frame=128 sample=1206 time=506720000
+GATE_PROGRESS frame=160 sample=1238 time=631820000
+GATE_PROGRESS frame=192 sample=1270 time=756920000
+GATE_PROGRESS frame=224 sample=1302 time=882020000
+GATE_PROGRESS frame=256 sample=1334 time=1007120000
+GATE_PROGRESS frame=288 sample=1366 time=1132220000
+GATE_PROGRESS frame=320 sample=1398 time=1257320000
+GATE_PROGRESS frame=352 sample=1430 time=1382320000
+PASS gate-level black-box replay impl=0 force_int8=1 int8_lanes=2: 359 calibration images, no_fallback=359 fallback=0; decisions, flags, cycles, invalid pixels, reset and stalls
+/home/runner/work/FlexMAC/FlexMAC/tests/tb_adaptive.v:178: $finish called at 1409720000 (1ps)

@@ -29,6 +29,13 @@ See the [mapped comparison and verification scope](docs/mapped_study.md).
 
 ![Mapped area, tested clock periods and inference latency](docs/figures/mapped_comparison.png)
 
+The [score-comparison pipeline follow-up](docs/score_pipeline.md) improves the
+two-lane INT8 engine further. Separating score calculation from class comparison
+reduces latency from **5.220 to 4.448 µs (14.8%)** at each design's directly tested
+passing period, for about **1.5% more cell area**. It adds ten cycles per image;
+at a common 15 ns clock the original baseline is faster. Full 359-image mapped
+replay passes in both two-state and four-state simulators for both designs.
+
 ## Current implementation
 
 - A shared partial-product core: one signed INT8 product, or two signed INT4
@@ -116,6 +123,7 @@ python scripts/check_synthesis.py
 bash scripts/check_classifier.sh
 bash scripts/check_agreement.sh
 bash scripts/check_adaptive.sh
+bash scripts/check_scorepipe.sh
 ```
 
 The RTL script generates 65,536 operand pairs per mode, tests both stream

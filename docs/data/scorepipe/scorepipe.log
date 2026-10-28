@@ -1,0 +1,2 @@
+PASS scorepipe: 359 calibration images; all INT8 class scores/predictions, score/class/last tags, exact 394 cycles plus input gaps, signed32 wrap, signed/tie/final comparison, invalid pixels, reset and stalls
+tests/tb_scorepipe.v:204: $finish called at 1450770000 (1ps)

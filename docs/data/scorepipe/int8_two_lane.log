@@ -1,0 +1,2 @@
+PASS raw classifier impl=0 force_int8=1 int8_lanes=2: 359 calibration images, no_fallback=359 fallback=0; exact INT8 decisions, class scores, applicable interval containment, cycle counts, invalid pixels, reset and stalls
+tests/tb_adaptive.v:178: $finish called at 1409720000 (1ps)

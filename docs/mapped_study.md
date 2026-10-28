@@ -1,5 +1,9 @@
 # Library-mapped comparison
 
+This report preserves the original four-design comparison. The later
+[score-comparison pipeline follow-up](score_pipeline.md) adds a timing-driven
+two-lane INT8 variant and a separate matched experiment.
+
 The RTL architectures and frozen models are unchanged. This flow maps the four
 raw-input engines into one characterized standard-cell library and tests whether
 the generic-cell/cycle conclusions survive technology mapping. The flow is
