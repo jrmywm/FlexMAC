@@ -7,6 +7,9 @@ small classifier: does it meet an accuracy budget, and what area/latency cost
 comes with supporting both modes? The contribution is the verified implementation
 and evaluation; configurable precision itself is an established technique.
 
+[Download the six-page technical report](output/pdf/flexmac_technical_report.pdf)
+or [read the editable manuscript](docs/report/flexmac_technical_report.md).
+
 ## Main finding
 
 For this frozen linear classifier, ordinary two-lane INT8 is a stronger design
