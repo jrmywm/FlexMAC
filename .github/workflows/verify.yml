@@ -29,6 +29,8 @@ jobs:
         run: bash scripts/check_agreement.sh
       - name: Adaptive raw-pixel classifier and always-INT8 baseline
         run: bash scripts/check_adaptive.sh
+      - name: Score-pipelined INT8 scores, class tags, reset and latency
+        run: bash scripts/check_scorepipe.sh
       - name: Generic synthesis of cores and engines
         run: python scripts/check_synthesis.py
       - name: Record tool versions and source history

@@ -1,0 +1,44 @@
+{
+  "baseline_commit": "18947980bf001b55ef5354627c5a49e7bae3decc",
+  "designs": {
+    "int8_two_lane": {
+      "FORCE_INT8": 1,
+      "INT8_LANES": 2,
+      "PRODUCT_IMPL": 0
+    },
+    "int8_two_lane_scorepipe": {}
+  },
+  "source_sha256": {
+    "rtl/flexmac_product.v": "e2fbd188205d8955693620f2d98518738308b1a062d975120cb0bac61667b127",
+    "rtl/flexmac_baselines.v": "5c29051159fc4aaef2c419e6c192f3bf00c06970856423f672b2dc8e8156d58f",
+    "rtl/flexmac_int8x2.v": "44ae80577e11283e1524d455492ad95ff6b2784360c1f02e2ad2612983bd8119",
+    "rtl/digits_model_rom.v": "341e18b39b3116beda1583d5867ecbedf688abe9ddd64e58b7663498d1c250fd",
+    "rtl/digits_residual_rom.v": "9d050372f78d3b15f0139153d5d3719046afddaa346eb1fea12fcd374c00e49c",
+    "rtl/digits_pixel_quantizer.v": "74ce9a081fae5317ab4895706b5fe8a253149333c043d7af56336d15f2f1c470",
+    "rtl/flexmac_adaptive.v": "8bd3b7725ef7b3ebb5bd9f52a7c64371e936ffaf2b90d863107cd9c76074109d",
+    "model/agreement/residual_ranges.hex": "27842679fabbc5181a8f90af523665a1e21c08635e9ccad7a7dc20f47b841afa",
+    "rtl/flexmac_int8x2_scorepipe.v": "904b6a038c9f79e6b1a487251458a59f9d6483db50361fd78e52b9fd8a9dcf2d"
+  },
+  "map_directory": "build/scorepipe/map",
+  "reference_csv": {
+    "int8_two_lane": "int8_two_lane.csv",
+    "int8_two_lane_scorepipe": "scorepipe.csv"
+  },
+  "top_modules": {
+    "int8_two_lane": "flexmac_adaptive",
+    "int8_two_lane_scorepipe": "flexmac_int8x2_scorepipe"
+  },
+  "additional_sources": {
+    "int8_two_lane_scorepipe": [
+      "rtl/flexmac_int8x2_scorepipe.v"
+    ]
+  },
+  "testbenches": {
+    "int8_two_lane": "tests/tb_adaptive.v",
+    "int8_two_lane_scorepipe": "tests/tb_scorepipe.v"
+  },
+  "testbench_tops": {
+    "int8_two_lane": "tb_adaptive",
+    "int8_two_lane_scorepipe": "tb_scorepipe"
+  }
+}

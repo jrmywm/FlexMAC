@@ -44,8 +44,8 @@ def validate_inputs():
         raise ValueError('Wrong mapped netlist set')
     if digest(MAP/'library_pruned.lib')!=metadata['library_pruned_sha256']:
         raise ValueError('Library changed after mapping')
-    for kind in ('rtl_sha256','fixture_sha256'):
-        for path,sha in metadata[kind].items():
+    for kind in ('rtl_sha256','fixture_sha256','verification_sha256'):
+        for path,sha in metadata.get(kind,{}).items():
             if digest(ROOT/path)!=sha: raise ValueError(f'Source changed: {path}')
     for row in manifest:
         name=row['design']
@@ -58,6 +58,8 @@ def validate_inputs():
 
 def replay(row, metadata):
     name=row['design'];params=row['params']
+    bench=ROOT/row.get('testbench','tests/tb_adaptive.v')
+    top=row.get('testbench_top','tb_adaptive')
     flat=MAP/f'{name}.gates.v'
     commands=(f'read_liberty -overwrite -ignore_miss_func -ignore_miss_dir {MAP/"library_pruned.lib"}; '
         f'read_verilog -defer {ROOT/row["netlist"]}; hierarchy -check -top flexmac_mapped; '
@@ -70,9 +72,9 @@ def replay(row, metadata):
     obj=MAP/f'{name}.obj'
     run(['verilator','--binary','--timing','--assert','-Wno-fatal','-O3',
          '--output-split','15000','--output-split-cfuncs','100','-j','2',
-         '-DGATE_LEVEL','--top-module','tb_adaptive','--Mdir',str(obj),'-o','replay']
+         '-DGATE_LEVEL','--top-module',top,'--Mdir',str(obj),'-o','replay']
         +[f'-G{k}={v}' for k,v in params.items()]
-        +[str(flat),str(ROOT/'tests/tb_adaptive.v')],
+        +[str(flat),str(bench)],
         MAP/f'{name}.verilator.log',900)
     full_csv=MAP/f'{name}.replay.csv'
     run([str(obj/'replay'),f'+report={full_csv}','+progress',
@@ -81,13 +83,13 @@ def replay(row, metadata):
     if read_csv(full_csv)!=expected:
         raise ValueError(f'{name}: compiled replay differs from RTL')
     # Four-state execution is full for smaller baselines and stratified for adaptive.
-    indices=list(range(1078,1437)) if params['FORCE_INT8'] else four_state_selection()
+    indices=list(range(1078,1437)) if params.get('FORCE_INT8',1) else four_state_selection()
     selection=MAP/f'{name}.indices.hex'
     save(selection,''.join(f'{i:08x}\n' for i in indices))
     binary=MAP/f'{name}.vvp'
-    run(['iverilog','-g2012','-DGATE_LEVEL','-s','tb_adaptive']
-        +[f'-Ptb_adaptive.{k}={v}' for k,v in params.items()]
-        +['-o',str(binary),str(flat),str(ROOT/'tests/tb_adaptive.v')],
+    run(['iverilog','-g2012','-DGATE_LEVEL','-s',top]
+        +[f'-P{top}.{k}={v}' for k,v in params.items()]
+        +['-o',str(binary),str(flat),str(bench)],
         MAP/f'{name}.icarus_compile.log',180)
     four_csv=MAP/f'{name}.icarus.csv'
     run(['vvp',str(binary),f'+report={four_csv}',f'+indices={selection}',
@@ -103,7 +105,7 @@ def replay(row, metadata):
         'full_backend':'Verilator two-state, randomized initialization seed 20261027',
         'four_state_backend':'Icarus Verilog','four_state_frames':len(indices),
         'four_state_indices':indices,'four_state_scope':
-            'all calibration frames' if params['FORCE_INT8'] else
+            'all calibration frames' if params.get('FORCE_INT8',1) else
             'all calibration fallbacks plus one certified example per INT8 predicted class',
         'rtl_csv_sha256':row['rtl_reference_sha256'],
         'mapped_csv_sha256':digest(full_csv),'four_state_csv_sha256':digest(four_csv),
@@ -118,7 +120,7 @@ def aggregate(metadata, manifest):
     for row in manifest:
         name=row['design']
         report=json.loads((MAP/f'{name}.replay.json').read_text())
-        expected_indices=list(range(1078,1437)) if row['params']['FORCE_INT8'] else four_state_selection()
+        expected_indices=list(range(1078,1437)) if row['params'].get('FORCE_INT8',1) else four_state_selection()
         if (report['design']!=name or report['source_commit']!=metadata['source_commit']
                 or report['netlist_sha256']!=row['netlist_sha256']
                 or report['rtl_csv_sha256']!=row['rtl_reference_sha256']
@@ -139,14 +141,20 @@ def aggregate(metadata, manifest):
         'mapping_manifest_sha256':digest(MAP/'manifest.json'),
         'scope':'zero-delay functional replay; full two-state plus separate four-state coverage; no internal score probes or SDF',
         'designs':reports},indent=2)+'\n')
-    print('PASS all four mapped configurations and replay artifact hashes',flush=True)
+    print(f'PASS all {len(reports)} mapped configurations and replay artifact hashes',flush=True)
 
 
 def main():
+    global MAP,DESIGNS,REFERENCE_CSV
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--design',choices=DESIGNS)
+    parser.add_argument('--study',type=Path)
+    parser.add_argument('--design')
     parser.add_argument('--aggregate-only',action='store_true')
     args=parser.parse_args()
+    if args.study:
+        study=json.loads((ROOT/args.study).read_text())
+        MAP=ROOT/study['map_directory'];DESIGNS=study['designs'];REFERENCE_CSV=study['reference_csv']
+    if args.design is not None and args.design not in DESIGNS: parser.error('Unknown mapped design')
     if args.design and args.aggregate_only: parser.error('Choose replay or aggregation')
     metadata,manifest=validate_inputs()
     if not args.aggregate_only:

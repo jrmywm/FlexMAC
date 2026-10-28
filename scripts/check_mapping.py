@@ -1,6 +1,7 @@
 """Pinned-library mapping and directly tested setup-period brackets; no RTL changes."""
 from pathlib import Path
 import collections
+import argparse
 import csv
 import fnmatch
 import gzip
@@ -75,15 +76,16 @@ def prepare_library(text):
     return text,areas,sequential
 
 
-def map_design(name, params, lib, areas, sequential, cfg):
+def map_design(name, params, lib, areas, sequential, cfg, top='flexmac_adaptive', sources=None):
     netlist=MAP/f'{name}.v'; stats=MAP/f'{name}.json'
     constr=MAP/'abc.constr'
     save(constr,f"set_driving_cell {cfg['input_driving_cell']}\nset_load {cfg['output_load_ff']}\n")
-    commands=[f'read_liberty -lib -overwrite {lib}',f'read_verilog {" ".join(SOURCES)}',
-              'chparam '+ ' '.join(f'-set {k} {v}' for k,v in params.items())+' flexmac_adaptive',
-              'synth -top flexmac_adaptive -flatten -noabc',f'dfflibmap -liberty {lib}',
+    commands=[f'read_liberty -lib -overwrite {lib}',f'read_verilog {" ".join(sources or SOURCES)}']
+    if params:
+        commands.append('chparam '+ ' '.join(f'-set {k} {v}' for k,v in params.items())+' '+top)
+    commands += [f'synth -top {top} -flatten -noabc',f'dfflibmap -liberty {lib}',
               f"abc -liberty {lib} -D {round(cfg['mapping_target_ns']*1000)} -constr {constr}",
-              'opt_clean -purge','check -assert','rename flexmac_adaptive flexmac_mapped',
+              'opt_clean -purge','check -assert',f'rename {top} flexmac_mapped',
               f'write_json {stats}',f'write_verilog -noattr -noexpr {netlist}']
     script=MAP/f'{name}.ys';save(script,';\n'.join(commands)+'\n')
     subprocess.run(['yosys','-Q','-l',str(MAP/f'{name}.yosys.log'),'-s',str(script)],
@@ -172,9 +174,17 @@ def sta_design(name, period, tag, sta,lib,cfg,details=False):
     return metrics
 
 
-def run():
+def run(study_file=None):
+    global MAP,DESIGNS,REFERENCE_CSV
+    architecture_file=ROOT/'eda/architectures.json'
+    study={}
+    if study_file is not None:
+        architecture_file=ROOT/study_file
+        study=json.loads(architecture_file.read_text())
+        MAP=ROOT/study['map_directory']
+        DESIGNS=study['designs'];REFERENCE_CSV=study['reference_csv']
     cfg=json.loads(CONFIG.read_text()); MAP.mkdir(parents=True,exist_ok=True)
-    architecture_lock=json.loads((ROOT/'eda/architectures.json').read_text())
+    architecture_lock=json.loads(architecture_file.read_text())
     if architecture_lock['designs']!=DESIGNS: raise ValueError('Architecture configurations changed after freeze')
     for path,sha in architecture_lock['source_sha256'].items():
         canonical=(ROOT/path).read_text(encoding='utf-8').encode()
@@ -190,10 +200,12 @@ def run():
     lib=MAP/'library_pruned.lib';save(lib,libtext)
     metadata={'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         'architecture_baseline_commit':architecture_lock['baseline_commit'],
-        'architecture_lock_sha256':digest(ROOT/'eda/architectures.json'),
+        'architecture_lock_sha256':digest(architecture_file),
         'config':cfg,'library_source_sha256':digest(source),'library_pruned_sha256':digest(lib),
         'liberty_cells':len(areas),'yosys_version':subprocess.check_output(['yosys','-V'],text=True).strip(),
-        'sta_binary_sha256':digest(sta),'rtl_sha256':{p:digest(ROOT/p) for p in SOURCES},
+        'sta_binary_sha256':digest(sta),'rtl_sha256':{p:digest(ROOT/p) for p in dict.fromkeys(
+            SOURCES+[p for extra in study.get('additional_sources',{}).values() for p in extra])},
+        'verification_sha256':{p:digest(ROOT/p) for p in study.get('testbenches',{}).values()},
         'fixture_sha256':{p.relative_to(ROOT).as_posix():digest(p) for p in (ROOT/'model/agreement').glob('*.hex')},
         'residual_rom_sha256':digest(ROOT/'model/agreement/residual_ranges.hex'),
         'scope':'pre-layout, one typical corner, ideal wires and clock; not signoff'}
@@ -204,7 +216,12 @@ def run():
     save(MAP/'metadata.json',json.dumps(metadata,indent=2)+'\n')
     rows=[];probes=[]
     for name,params in DESIGNS.items():
-        row=map_design(name,params,lib,areas,sequential,cfg)
+        row=map_design(name,params,lib,areas,sequential,cfg,
+            top=study.get('top_modules',{}).get(name,'flexmac_adaptive'),
+            sources=SOURCES+study.get('additional_sources',{}).get(name,[]))
+        if name in study.get('testbenches',{}):
+            row['testbench']=study['testbenches'][name]
+            row['testbench_top']=study['testbench_tops'][name]
         target=sta_design(name,cfg['mapping_target_ns'],'target',sta,lib,cfg)
         row['setup_wns_at_mapping_target_ns']=target['setup_wns_ns'];row['mapping_target_met']=target['setup_met']
         lower=0.25
@@ -248,11 +265,13 @@ def run():
     save(MAP/'manifest.json',json.dumps(rows,indent=2)+'\n')
     save(MAP/'period_search.json',json.dumps(probes,indent=2)+'\n')
     flat=[{k:v for k,v in r.items() if k!='params'} for r in rows]
-    with (ROOT/'build/mapped_comparison.csv').open('w',newline='',encoding='utf-8') as f:
+    with (MAP.parent/'mapped_comparison.csv').open('w',newline='',encoding='utf-8') as f:
         writer=csv.DictWriter(f,fieldnames=flat[0].keys(),lineterminator='\n');writer.writeheader();writer.writerows(flat)
     print('PASS directly tested setup brackets and common-clock setup/hold. Pre-layout estimates only.')
     return 0
 
 
 if __name__=='__main__':
-    raise SystemExit(run())
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--study',type=Path,help='Separate frozen experiment manifest')
+    raise SystemExit(run(parser.parse_args().study))

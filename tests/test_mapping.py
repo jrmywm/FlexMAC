@@ -8,6 +8,20 @@ from check_mapping import prepare_library,parse_sta,sdc_text
 
 
 class MappingTests(unittest.TestCase):
+    def test_scorepipe_study_keeps_the_baseline_frozen(self):
+        import hashlib,json
+        from check_mapping import DESIGNS
+        root=Path(__file__).resolve().parents[1]
+        spec=json.loads((root/'eda/scorepipe_study.json').read_text())
+        original=json.loads((root/'eda/architectures.json').read_text())
+        self.assertEqual(spec['designs']['int8_two_lane'],DESIGNS['int8_two_lane'])
+        self.assertEqual(spec['top_modules']['int8_two_lane'],'flexmac_adaptive')
+        self.assertNotIn('int8_two_lane',spec['additional_sources'])
+        for path,sha in original['source_sha256'].items():
+            self.assertEqual(spec['source_sha256'][path],sha)
+        for path,sha in spec['source_sha256'].items():
+            self.assertEqual(hashlib.sha256((root/path).read_text(encoding='utf-8').encode()).hexdigest(),sha,path)
+
     def test_frozen_architectures(self):
         import hashlib,json
         from check_mapping import DESIGNS
