@@ -7,8 +7,9 @@ small classifier: does it meet an accuracy budget, and what area/latency cost
 comes with supporting both modes? The contribution is the verified implementation
 and evaluation; configurable precision itself is an established technique.
 
-[Download the six-page technical report](output/pdf/flexmac_technical_report.pdf)
-or [read the editable manuscript](docs/report/flexmac_technical_report.md).
+[Download the IEEE-style technical report](output/pdf/flexmac_technical_report.pdf),
+[edit the LaTeX source](docs/report/latex/main.tex), or
+[download the Overleaf-ready source ZIP](output/flexmac_latex_source.zip).
 
 ## Main finding
 

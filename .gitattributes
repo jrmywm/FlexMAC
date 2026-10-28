@@ -4,3 +4,5 @@
 *.gz binary
 *.zip binary
 *.bundle binary
+docs/report/latex/IEEEtran.cls -text -whitespace
+docs/report/latex/IEEEtran.bst -text -whitespace

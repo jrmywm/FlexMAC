@@ -1,27 +1,34 @@
-# FlexMAC technical report
+# FlexMAC LaTeX technical report
 
-This directory contains the editable manuscript and its reproducible PDF builder.
-The final PDF is linked from the project README. It is an independent technical
-report, not a claim of peer-reviewed publication.
+The report uses the original IEEEtran conference class in two-column mode,
+native LaTeX equations, vector PDF figures, and a BibTeX bibliography. It remains
+an independent technical report; the format does not imply peer-reviewed publication.
 
-The manuscript uses only archived project measurements and cited primary sources.
-See the measured-revision and CI references in the report for provenance.
+- [Read the compiled PDF](../../output/pdf/flexmac_technical_report.pdf)
+- [Download the Overleaf-ready source ZIP](../../output/flexmac_latex_source.zip)
+- [Edit main.tex](latex/main.tex): template, title and author configuration
+- [Edit manuscript.tex](latex/manuscript.tex): report body, equations and tables
+- [Edit references.bib](latex/references.bib): bibliography
+- [Illustrated architecture guide](../architecture.md)
 
-- [Download the six-page PDF](../../output/pdf/flexmac_technical_report.pdf)
-- [Edit the manuscript](flexmac_technical_report.md)
-- [Read the illustrated architecture guide](../architecture.md)
+## Compile
 
-From the repository root:
+Upload the source ZIP to Overleaf and select main.tex. Alternatively, open the
+latex/ project in the built-in LaTeX editor, or use a standard TeX installation.
+
+From the full repository, the lightweight Tectonic wrapper is:
 
 ```bash
-python -m pip install -r docs/report/requirements.txt
-python docs/report/build_report.py
+python docs/report/build_report.py --tectonic PATH_TO_TECTONIC
 ```
 
-The builder creates print-sized figures from the archived result CSVs, embeds
-fonts, checks the six-page output, and records source/PDF hashes in
-`provenance.json`. It does not run training, simulation or synthesis. Editing
-the manuscript may require adjusting page breaks to retain six readable pages.
+If Tectonic is on PATH or at .tools/tectonic/tectonic.exe, omit the option.
+The wrapper copies the compiled PDF to output/pdf/, packages the source ZIP,
+and records source/output hashes and the compiler version in provenance.json.
 
-Final layout was checked by rendering and inspecting all six pages. The author
-line uses the name recorded in the repository: Jeremy W. M. (jrmywm).
+Figures are already included as vectors. To regenerate them from the archived
+measurements, install requirements.txt and run python docs/report/latex/prepare_figures.py.
+This optional Python step prepares figures; LaTeX typesets the manuscript.
+
+The exact IEEEtran class/style versions, upstream URL, license and hashes are in
+latex/template_provenance.json. Both third-party files retain their original notices.

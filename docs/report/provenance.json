@@ -1,20 +1,25 @@
 {
-  "report_date": "2026-10-28",
-  "scope": "Independent technical report, not peer-reviewed publication",
+  "format": "LaTeX IEEEtran conference class, independent technical report",
+  "compiler": "Tectonic 0.17.0",
+  "pages": 4,
+  "source_sha256": {
+    "docs/report/build_report.py": "0d4f902f95672440bb3d1c145d148646421abf87d09c6c65051a633fe91d8677",
+    "docs/report/latex/main.tex": "f1b9a92ede927936d0794108cd9a0b8745d9bb7ee736daf51f51c8fbdae6468d",
+    "docs/report/latex/manuscript.tex": "d4e3ac75f5d582f5321e6d64ada624d2bebae47a10dac7d8f2872c751a33252c",
+    "docs/report/latex/references.bib": "95b8080e128a8ee67e6d1199cb22f0afaa96d1384d1cdeafd5808babca39feb1",
+    "docs/report/latex/IEEEtran.cls": "da751920a317ed318b7b5cd7fa585a6cc7d28502d457856382e9be24b10a3bd7",
+    "docs/report/latex/IEEEtran.bst": "314f0ece704568faf827011bac498650691b2b5ee06320720830e782416d5a5f",
+    "docs/report/latex/README.md": "f225788ba558a7c846247185f9f25d0b03f6784f05d9875fb64a5f05e353aa4b",
+    "docs/report/latex/template_provenance.json": "a2898f3e49af9262d62d32ce9da137f511e384b9c2a478f7f1899343ce3c0b8a",
+    "docs/report/latex/images/report_datapath.pdf": "768fb2d25e2084464773ea4ff8a15dfe4e0fae5e01e43582556d311c44b4ffa0",
+    "docs/report/latex/images/report_results.pdf": "26025254d5f199f655026e8d7eb8c3c37da526b5f3fe070424a59763a6aec504",
+    "docs/data/mapping/mapped_comparison.csv": "8006244b6cb09ccb62e01cd89343012a182051139760ef6b51e5f51a864ebd7d",
+    "docs/data/scorepipe/mapped_comparison.csv": "55a69789b6a95fbc7b7b37cea59b259cdbd200249d7de702ddab43ea22af7cfa"
+  },
+  "pdf_sha256": "0b065bab5c716eb15d4286b7c5a16beaf8353d9195d2db7ddb92a60dfae3f784",
+  "source_zip_sha256": "4730dacc06fcbf0ff6dbb46aa502b501449320452517a600fc5823c2c03b8899",
   "measurement_commits": {
     "four_design_study": "96141e7767723cfd53e6830a948e46bef05687d8",
     "score_pipeline_study": "8e9065cb147d38b66423997e6d960a7239d8f5e9"
-  },
-  "pages": 6,
-  "matplotlib": "3.10.7",
-  "source_sha256": {
-    "docs/data/mapping/mapped_comparison.csv": "8006244b6cb09ccb62e01cd89343012a182051139760ef6b51e5f51a864ebd7d",
-    "docs/data/scorepipe/mapped_comparison.csv": "55a69789b6a95fbc7b7b37cea59b259cdbd200249d7de702ddab43ea22af7cfa",
-    "docs/data/mapping/metadata.json": "606a2ee09b9e009e0fcb9e58f92f5e94980df4078d01895c7c7d694f55d4ba08",
-    "docs/data/scorepipe/metadata.json": "9fa271be4d78b7507c8ca3af1cd851e83dac940bbda6553d56f707f2dcdb6f89",
-    "model/digits/metadata.json": "39d577de13c3ac5257b056519d0a8df922eb77fe9f384ada60afaef9973dd64b",
-    "docs/report/flexmac_technical_report.md": "62d3cf3e1bc45d23cc33afcb071422db41388d5edf9232efa12a55207607fc65",
-    "docs/report/build_report.py": "9d8f60c326d4dd9c9e8446e6a87dce52721526072140e1fc09cc165c88557921"
-  },
-  "pdf_sha256": "244337a266e599e2720a343bf9a48dc7fea7caebc2cbe847066a0e2db6391618"
+  }
 }
