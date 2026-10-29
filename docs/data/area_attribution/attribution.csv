@@ -1,0 +1,6 @@
+bucket,cells,area_um2,sequential_area_um2,combinational_area_um2
+arithmetic,508,3588.4416,0,3588.4416
+model_tables,1330,7728.6624,0,7728.6624
+preprocessing,58,317.8048,0,317.8048
+remaining_top,6616,59542.1056,22581.657600000002,36960.448000000004
+residual_tables,26561,161581.2192,0,161581.2192

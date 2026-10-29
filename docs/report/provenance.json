@@ -1,11 +1,11 @@
 {
   "format": "LaTeX IEEEtran conference class, independent technical report",
   "compiler": "Tectonic 0.17.0",
-  "pages": 4,
+  "pages": 5,
   "source_sha256": {
-    "docs/report/build_report.py": "0d4f902f95672440bb3d1c145d148646421abf87d09c6c65051a633fe91d8677",
-    "docs/report/latex/main.tex": "f1b9a92ede927936d0794108cd9a0b8745d9bb7ee736daf51f51c8fbdae6468d",
-    "docs/report/latex/manuscript.tex": "d4e3ac75f5d582f5321e6d64ada624d2bebae47a10dac7d8f2872c751a33252c",
+    "docs/report/build_report.py": "7fd7cec1ea835700efcf39ae552df818d13044a529b0f02eaf4152dfe6ccc48b",
+    "docs/report/latex/main.tex": "0f26f9148e5dc9832f53096a186211bfcb5b8c755b35c04e04043509c5edabe9",
+    "docs/report/latex/manuscript.tex": "ee0c7f7fd5485db4424559b75d6ed33de64dc4a77190905aad3d6eb78b063e47",
     "docs/report/latex/references.bib": "95b8080e128a8ee67e6d1199cb22f0afaa96d1384d1cdeafd5808babca39feb1",
     "docs/report/latex/IEEEtran.cls": "da751920a317ed318b7b5cd7fa585a6cc7d28502d457856382e9be24b10a3bd7",
     "docs/report/latex/IEEEtran.bst": "314f0ece704568faf827011bac498650691b2b5ee06320720830e782416d5a5f",
@@ -14,12 +14,18 @@
     "docs/report/latex/images/report_datapath.pdf": "768fb2d25e2084464773ea4ff8a15dfe4e0fae5e01e43582556d311c44b4ffa0",
     "docs/report/latex/images/report_results.pdf": "26025254d5f199f655026e8d7eb8c3c37da526b5f3fe070424a59763a6aec504",
     "docs/data/mapping/mapped_comparison.csv": "8006244b6cb09ccb62e01cd89343012a182051139760ef6b51e5f51a864ebd7d",
-    "docs/data/scorepipe/mapped_comparison.csv": "55a69789b6a95fbc7b7b37cea59b259cdbd200249d7de702ddab43ea22af7cfa"
+    "docs/data/scorepipe/mapped_comparison.csv": "55a69789b6a95fbc7b7b37cea59b259cdbd200249d7de702ddab43ea22af7cfa",
+    "docs/data/overlap/mapped_comparison.csv": "0ca0aa32faef86f03a9dd4dd9d799790a81d5c759df603b63a181ad016cec03c",
+    "docs/data/synthetic/results.csv": "5c6929f7d2fab417ffc1ae66918936d8b197eaf41f39a8b725215fffea9db90f",
+    "docs/data/area_attribution/attribution.json": "c514f161c117a3fbbff81a081f0dc2a2d87140c818e40045a36dc910c9554f56",
+    "docs/followup_experiments.md": "20d20cacedd72c9f5119e59bb37872717ac20f797c7f2069ad4cc3b35cdc2130"
   },
-  "pdf_sha256": "0b065bab5c716eb15d4286b7c5a16beaf8353d9195d2db7ddb92a60dfae3f784",
-  "source_zip_sha256": "4730dacc06fcbf0ff6dbb46aa502b501449320452517a600fc5823c2c03b8899",
+  "pdf_sha256": "9c088f14ca50cf8aed38b2b3a62f26bf2e2199abb7d2a216442a6a61c753a8d3",
+  "source_zip_sha256": "b66e080c681d3a961c07505b635310b999a76b21d5790da076fe4a5794aea54d",
   "measurement_commits": {
     "four_design_study": "96141e7767723cfd53e6830a948e46bef05687d8",
-    "score_pipeline_study": "8e9065cb147d38b66423997e6d960a7239d8f5e9"
+    "score_pipeline_study": "8e9065cb147d38b66423997e6d960a7239d8f5e9",
+    "overlap_study": "091f34e4aa0dfa5d764c56579836118e96b0e2ec",
+    "synthetic_and_area_study": "7a84bab8f44d0e6020c2a35ed3ba2943c942aca2"
   }
 }

@@ -42,12 +42,16 @@ def main():
         for name in names:z.write(TEX/name,name)
     sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
     sources=['docs/report/build_report.py']+['docs/report/latex/'+n for n in names]
-    sources += ['docs/data/mapping/mapped_comparison.csv','docs/data/scorepipe/mapped_comparison.csv']
+    sources += ['docs/data/mapping/mapped_comparison.csv','docs/data/scorepipe/mapped_comparison.csv',
+        'docs/data/overlap/mapped_comparison.csv','docs/data/synthetic/results.csv',
+        'docs/data/area_attribution/attribution.json','docs/followup_experiments.md']
     provenance={'format':'LaTeX IEEEtran conference class, independent technical report',
         'compiler':version,'pages':pages,'source_sha256':{n:sha(ROOT/n) for n in sources},
         'pdf_sha256':sha(OUTPUT),'source_zip_sha256':sha(PACKAGE),
         'measurement_commits':{'four_design_study':'96141e7767723cfd53e6830a948e46bef05687d8',
-            'score_pipeline_study':'8e9065cb147d38b66423997e6d960a7239d8f5e9'}}
+            'score_pipeline_study':'8e9065cb147d38b66423997e6d960a7239d8f5e9',
+            'overlap_study':'091f34e4aa0dfa5d764c56579836118e96b0e2ec',
+            'synthetic_and_area_study':'7a84bab8f44d0e6020c2a35ed3ba2943c942aca2'}}
     (TEX.parent/'provenance.json').write_text(json.dumps(provenance,indent=2)+'\n',encoding='utf-8',newline='\n')
     print(f'Compiled IEEEtran manuscript: {pages} pages; {OUTPUT}')
     print(f'Overleaf-ready source package: {PACKAGE}')

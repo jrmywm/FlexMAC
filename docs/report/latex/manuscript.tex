@@ -1,5 +1,5 @@
 \begin{abstract}
-FlexMAC compares precision adaptation with straightforward parallelism on a frozen ten-class digit classifier. An INT4-first engine uses conservative, input-conditioned score bounds to certify agreement with INT8, otherwise rerunning INT8. It certifies 351 of 359 calibration images, but its complete mapped implementation is larger and slower than a two-lane INT8 baseline. A subsequent register boundary separates completed-score comparison from accumulation. In a matched SKY130 typical-corner experiment, this change reduces no-gap latency from 5.220 to 4.448~$\mu$s at each design's directly tested passing period, with 1.493\% additional cell area. At a common 15~ns clock, its ten additional cycles instead increase latency by 2.604\%. These verified, pre-layout results demonstrate the importance of counting certificate hardware and clock-period costs; they establish neither energy savings nor production timing closure.
+FlexMAC compares precision adaptation with straightforward parallelism on a frozen ten-class digit classifier. An INT4-first engine uses conservative, input-conditioned score bounds to certify agreement with INT8, otherwise rerunning INT8. It certifies 351 of 359 calibration images, but its complete mapped implementation is larger and slower than a two-lane INT8 baseline. A subsequent register boundary separates completed-score comparison from accumulation. In a matched SKY130 typical-corner experiment, this change reduces no-gap latency from 5.220 to 4.448~$\mu$s at each design's directly tested passing period, with 1.493\% additional cell area. At a common 15~ns clock, its ten additional cycles instead increase latency by 2.604\%. A further overlapping comparison recovers nine cycles but is slightly slower at its own tested period; a bounded synthetic sweep and hierarchy-preserved area diagnostic investigate the limits. These verified, pre-layout results demonstrate the importance of counting certificate hardware and clock-period costs; they establish neither energy savings nor production timing closure.
 \end{abstract}
 \begin{IEEEkeywords}
 precision adaptation, quantization, RTL, conservative bounds, standard-cell mapping, static timing analysis
@@ -153,9 +153,128 @@ Latency at 15 ns ($\mu$s) & 5.760 & 5.910 \\
 
 The reported worst endpoint changes from \texttt{best\_score[0]} to \texttt{accumulator[30]}, consistent with separating score comparison from accumulation. The measured result supports this boundary placement, not an unmeasured further optimization.
 
+\section{Overlapped Comparison Follow-Up}
+The next experiment consumes a saved class score while computing the first
+product pair of the following class. A final drain compares class nine before
+publishing the result. The accumulation feedback remains unchanged. The
+schedule is 64 input cycles, 320 MAC cycles, and one final comparison, or 385
+command-to-valid cycles without input gaps. All 359 calibration frames reproduce
+every class score in RTL. All three matched engines also pass full 359-frame
+two-state and four-state mapped replay, with reset, stalls, and invalid-input
+checks. A deliberately corrupted pending-class tag is rejected. Original
+baseline netlist hashes reproduce exactly~\cite{flexmac}.
+
+\begin{table}[t]
+\caption{Matched overlap experiment, pre-layout SKY130 typical corner.}
+\label{tab:overlap}
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+Engine & Area & Cycles & Period & Latency \\
+ & ($\mu$m$^2$) & & (ns) & ($\mu$s) \\
+\midrule
+Original paired & 30,006 & 384 & 13.594 & 5.220 \\
+Separate compare & 30,454 & 394 & 11.289 & 4.448 \\
+Overlap compare & 30,795 & 385 & 11.641 & 4.482 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Removing nine bubbles does not win at each design's directly tested passing
+period (Table~\ref{tab:overlap}). Overlap has a longer critical path and is
+0.759\% slower than separate comparison, with 1.118\% more cell area. At the
+directly verified common 15~ns clock it takes 5.775~$\mu$s, improving on the
+separate pipeline's 5.910~$\mu$s but exceeding the original's 5.760~$\mu$s.
+The overlap critical endpoint is accumulator bit 30, rather than best-score
+comparison. All three designs fail the 10~ns target and pass common-clock setup
+and hold with zero reported electrical violations. The separate pipeline
+remains the lowest-latency complete engine at its own tested passing endpoint.
+
+
+\section{Cost Attribution and Bounded Scaling}
+\subsection{Hierarchy-Preserved Area Diagnostic}
+A separate diagnostic preserves module boundaries during mapping and recursively
+counts instantiated library cells. Independently flattening the resulting
+mapped hierarchy, without remapping, reproduces the cell counts exactly. The
+normal flattened adaptive map also reproduces its historical netlist hash.
+
+\begin{table}[t]
+\caption{Diagnostic mapped hierarchy; not flattened-area attribution.}
+\centering
+\begin{tabular}{lr}
+\toprule
+Bucket & Area ($\mu$m$^2$) \\
+\midrule
+Arithmetic & 3,588 \\
+Model tables & 7,729 \\
+Preprocessing & 318 \\
+Remaining top-level logic & 59,542 \\
+Residual tables and bias & 161,581 \\
+\midrule
+Diagnostic total & 232,758 \\
+Normal flattened total & 167,946 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Residual-table and bias logic occupies 69.4\% of the preserved-hierarchy total.
+That diagnostic total is 38.6\% larger than the normal flattened result because
+boundaries restrict optimization. Consequently, 69.4\% is not the residual share
+of the flattened engine. The diagnostic identifies expensive bound
+representation, rather than an exact allocation of flattened area. Remaining
+top-level logic includes feature storage, interval arithmetic/checking, and
+control; it is not divided using unsupported estimates.
+
+\subsection{Synthetic Shape Sweep}
+A separate parameterized engine evaluates three schedules on three shapes.
+Signed INT8 features are loaded at runtime; deterministic fixed weights and
+biases have identical tables and read-port assumptions within a shape. Input
+loading, feature registers and weight logic are counted. There is no raw-pixel
+preprocessing or trained model. Internal score probes are not synthesis output
+ports. These engines therefore test bounded scheduling behavior rather than
+extend the classifier's accuracy evidence.
+
+All nine configurations pass 24 runtime frames each, checking every class
+score, decisions, exact cycles, input gaps, stalls, signed extremes, and reset.
+Directed register-level tests additionally check ties and signed final winners;
+an unsigned-comparison fault is rejected. The synthetic mapped netlists have
+not undergone functional replay. This verification scope is distinct from the
+full mapped replay of the three production classifier engines.
+
+\begin{table}[t]
+\caption{Synthetic runtime-input sweep. Latency includes loading and uses each design's directly tested passing setup period.}
+\label{tab:synthetic}
+\centering
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+Shape & Schedule & Area & Cycles & Period & Latency \\
+ & & ($\mu$m$^2$) & & (ns) & ($\mu$s) \\
+\midrule
+32 $\times$ 4 & Original & 22,022 & 96 & 13.125 & 1.2600 \\
+32 $\times$ 4 & Separate & 23,837 & 100 & 11.367 & 1.1367 \\
+32 $\times$ 4 & Overlap & 23,817 & 97 & 11.719 & 1.1367 \\
+64 $\times$ 10 & Original & 34,023 & 384 & 14.453 & 5.5500 \\
+64 $\times$ 10 & Separate & 35,255 & 394 & 12.148 & 4.7865 \\
+64 $\times$ 10 & Overlap & 35,411 & 385 & 12.695 & 4.8877 \\
+128 $\times$ 10 & Original & 55,112 & 768 & 12.305 & 9.4500 \\
+128 $\times$ 10 & Separate & 56,377 & 778 & 11.953 & 9.2995 \\
+128 $\times$ 10 & Overlap & 56,527 & 769 & 12.148 & 9.3421 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Separate comparison matches or beats overlap at the tested own-period endpoints
+for all three shapes (Table~\ref{tab:synthetic}). Its gains over original
+scheduling are approximately 9.8\%, 13.8\%, and 1.6\%, respectively. The common
+clocks are 14.5, 16, and 14~ns; original scheduling has the fewest cycles at a
+common clock. These observations depend on fixed weight specialization,
+addressing and mapping, and establish no monotonic scaling law or general
+superiority. Sources and all CSVs are archived at the measured overlap revision
+\texttt{091f34e4} and synthetic/area revision \texttt{7a84bab8}~\cite{flexmac}.
+
 \section{Limitations and Conclusion}
 Precision reduction creates opportunity only when its supporting machinery costs less than the work saved. Here, a high certificate acceptance rate does not compensate for residual-table logic and a slower complete engine. Straightforward INT8 parallelism is the stronger original design; registering its score comparison then improves elapsed time under the stated timing model.
 
 Passing setup slacks at the matched endpoints are only $+0.002972$~ns and $+0.005231$~ns. These tiny positive margins reflect discrete search resolution, not practical signoff margin. Common-clock setup and hold pass with no reported maximum-slew or capacitance violations, but ideal-clock hold checks do not establish clock-tree closure. Replay has no SDF and does not measure physical timing or glitches.
 
-The evidence covers one linear model and one typical library corner. It includes no placed-and-routed implementation, measured power, energy, FPGA result, SoC integration, or formal proof of RTL correctness. Calibration-based architecture exploration provides no new held-out accuracy evidence. Broader workloads, independent evaluation, and physical implementation would be needed before generalizing. Within this boundary, FlexMAC provides a reproducible example of rejecting an expensive adaptation strategy and validating a conventional pipeline change with explicit tradeoffs.
+The trained-model evidence covers one linear model and one typical library corner; the separate three-shape sweep uses synthetic weights and makes no additional accuracy claim. It includes no placed-and-routed implementation, measured power, energy, FPGA result, SoC integration, or formal proof of RTL correctness. Calibration-based architecture exploration provides no new held-out accuracy evidence. Broader workloads, independent evaluation, and physical implementation would be needed before generalizing. Within this boundary, FlexMAC provides a reproducible example of rejecting an expensive adaptation strategy and validating a conventional pipeline change with explicit tradeoffs.

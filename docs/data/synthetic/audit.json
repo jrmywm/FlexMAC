@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "source_commit": "7a84bab8f44d0e6020c2a35ed3ba2943c942aca2",
+  "ci_run": 40825890561,
+  "synthetic_configurations": 9,
+  "runtime_frames_per_configuration": 24,
+  "synthetic_mapped_functional_replay": false,
+  "synthetic_same_shape_predictions_match": true,
+  "hierarchical_instance_counts_independently_reconciled": true,
+  "historical_flattened_adaptive_netlist_reproduced": true,
+  "scope": "RTL synthetic tests and pre-layout mapped timing; diagnostic hierarchical buckets are not flattened attribution"
+}

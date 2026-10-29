@@ -11,6 +11,10 @@ an independent technical report; the format does not imply peer-reviewed publica
 - [Edit references.bib](latex/references.bib): bibliography
 - [Illustrated architecture guide](../architecture.md)
 
+The current five-page manuscript includes the audited overlap experiment,
+hierarchy-preserved area diagnostic, and three-shape runtime-input sweep.
+See [follow-up evidence and limitations](../followup_experiments.md).
+
 ## Compile
 
 Upload the source ZIP to Overleaf and select main.tex. Alternatively, open the

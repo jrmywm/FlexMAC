@@ -1,0 +1,195 @@
+OpenSTA 3.1.0 b99a8e528d Copyright (c) 2026, Parallax Software, Inc.
+License GPLv3: GNU GPL version 3 <http://gnu.org/licenses/gpl.html>
+
+This is free software, and you are free to change and redistribute it
+under certain conditions; type `show_copying' for details. 
+This program comes with ABSOLUTELY NO WARRANTY; for details type `show_warranty'.
+ time 1ns
+ capacitance 1pF
+ resistance 1kohm
+ voltage 1v
+ current 1mA
+ power 1nW
+ distance 1um
+CHECK_BEGIN
+CHECK_END
+GROUP reg2reg 1.413429 _3708_/Q _3720_/D
+GROUP in2reg 9.703115 rst _3837_/D
+GROUP reg2out 10.660905 _3864_/Q result_class[0]
+GROUP in2out 7.901699 rst result_class[0]
+worst slack max 1.413430
+worst slack min 0.100368
+REPORT reg2reg
+Startpoint: _3708_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: _3720_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+    Delay      Time   Description
+-------------------------------------------------------------
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   0.0000    0.0000 ^ _3708_/CLK (sky130_fd_sc_hd__dfxtp_1)
+   0.3340    0.3340 ^ _3708_/Q (sky130_fd_sc_hd__dfxtp_1)
+   0.1276    0.4616 ^ _3188_/X (sky130_fd_sc_hd__buf_6)
+   0.1529    0.6146 ^ _3189_/X (sky130_fd_sc_hd__buf_8)
+   0.4899    1.1045 v _3677_/X (sky130_fd_sc_hd__mux4_2)
+   0.1208    1.2253 ^ _3678_/Y (sky130_fd_sc_hd__mux2i_1)
+   0.2211    1.4464 ^ _3679_/X (sky130_fd_sc_hd__mux2_2)
+   0.1290    1.5754 ^ _2085_/X (sky130_fd_sc_hd__or2_1)
+   0.4421    2.0175 v _2093_/X (sky130_fd_sc_hd__xnor3_2)
+   0.3929    2.4104 v _2118_/X (sky130_fd_sc_hd__xnor3_1)
+   0.3749    2.7852 v _2351_/X (sky130_fd_sc_hd__xnor3_1)
+   0.1541    2.9394 v _2352_/Y (sky130_fd_sc_hd__xnor2_1)
+   0.1843    3.1236 v _2364_/X (sky130_fd_sc_hd__xor2_1)
+   0.3690    3.4926 v _2377_/X (sky130_fd_sc_hd__maj3_1)
+   0.3358    3.8284 v _2378_/X (sky130_fd_sc_hd__maj3_2)
+   0.3250    4.1534 v _2379_/X (sky130_fd_sc_hd__maj3_2)
+   0.3286    4.4820 v _2380_/X (sky130_fd_sc_hd__maj3_2)
+   0.3251    4.8072 v _2381_/X (sky130_fd_sc_hd__maj3_2)
+   0.3240    5.1312 v _2382_/X (sky130_fd_sc_hd__maj3_2)
+   0.3240    5.4552 v _2383_/X (sky130_fd_sc_hd__maj3_2)
+   0.3240    5.7792 v _2384_/X (sky130_fd_sc_hd__maj3_2)
+   0.3287    6.1079 v _2385_/X (sky130_fd_sc_hd__maj3_2)
+   0.3252    6.4331 v _2386_/X (sky130_fd_sc_hd__maj3_2)
+   0.3287    6.7617 v _2387_/X (sky130_fd_sc_hd__maj3_2)
+   0.3298    7.0915 v _2388_/X (sky130_fd_sc_hd__maj3_2)
+   0.3293    7.4208 v _2389_/X (sky130_fd_sc_hd__maj3_2)
+   0.3286    7.7493 v _2390_/X (sky130_fd_sc_hd__maj3_2)
+   0.3284    8.0778 v _2391_/X (sky130_fd_sc_hd__maj3_2)
+   0.3333    8.4111 v _2392_/X (sky130_fd_sc_hd__maj3_2)
+   0.1653    8.5764 v _2445_/Y (sky130_fd_sc_hd__xnor2_1)
+   0.2867    8.8631 ^ _2512_/Y (sky130_fd_sc_hd__a221oi_1)
+   0.0656    8.9286 v _2513_/Y (sky130_fd_sc_hd__nor2_1)
+   0.3546    9.2832 v _2514_/X (sky130_fd_sc_hd__maj3_1)
+   0.3100    9.5933 v _2515_/X (sky130_fd_sc_hd__maj3_2)
+   0.3047    9.8979 v _2516_/X (sky130_fd_sc_hd__maj3_2)
+   0.3047   10.2026 v _2517_/X (sky130_fd_sc_hd__maj3_2)
+   0.3047   10.5073 v _2518_/X (sky130_fd_sc_hd__maj3_2)
+   0.3047   10.8119 v _2519_/X (sky130_fd_sc_hd__maj3_2)
+   0.3047   11.1166 v _2520_/X (sky130_fd_sc_hd__maj3_2)
+   0.3047   11.4213 v _2521_/X (sky130_fd_sc_hd__maj3_2)
+   0.3097   11.7310 v _2522_/X (sky130_fd_sc_hd__maj3_2)
+   0.2197   11.9507 ^ _2524_/Y (sky130_fd_sc_hd__a221oi_2)
+   0.0826   12.0334 v _2526_/Y (sky130_fd_sc_hd__a211oi_1)
+   0.2011   12.2344 ^ _2529_/Y (sky130_fd_sc_hd__o21ai_2)
+   0.1372   12.3716 ^ _2530_/X (sky130_fd_sc_hd__or2_1)
+   0.1335   12.5052 ^ _2531_/X (sky130_fd_sc_hd__buf_6)
+   0.1352   12.6403 ^ _2550_/X (sky130_fd_sc_hd__buf_12)
+   0.2037   12.8440 ^ _2557_/Y (sky130_fd_sc_hd__mux2i_1)
+   0.0373   12.8814 v _2558_/Y (sky130_fd_sc_hd__nor2_2)
+   0.0000   12.8814 v _3720_/D (sky130_fd_sc_hd__dfxtp_1)
+            12.8814   data arrival time
+
+  14.5000   14.5000   clock clk (rise edge)
+   0.0000   14.5000   clock network delay (ideal)
+  -0.1000   14.4000   clock uncertainty
+   0.0000   14.4000   clock reconvergence pessimism
+            14.4000 ^ _3720_/CLK (sky130_fd_sc_hd__dfxtp_1)
+  -0.1052   14.2948   library setup time
+            14.2948   data required time
+-------------------------------------------------------------
+            14.2948   data required time
+           -12.8814   data arrival time
+-------------------------------------------------------------
+             1.4134   slack (MET)
+
+
+REPORT in2reg
+Startpoint: rst (input port clocked by clk)
+Endpoint: _3837_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+    Delay      Time   Description
+-------------------------------------------------------------
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   2.9000    2.9000 v input external delay
+   0.0232    2.9232 v rst (in)
+   0.2768    3.1999 ^ _3094_/Y (sky130_fd_sc_hd__nor2b_1)
+   0.1353    3.3352 v _3095_/Y (sky130_fd_sc_hd__nand2_1)
+   0.3083    3.6436 v _2763_/X (sky130_fd_sc_hd__or3_1)
+   0.1616    3.8052 v _2764_/X (sky130_fd_sc_hd__clkbuf_1)
+   0.4135    4.2186 ^ _2835_/Y (sky130_fd_sc_hd__nor2_1)
+   0.3809    4.5995 v _2836_/X (sky130_fd_sc_hd__mux2_2)
+   0.0000    4.5995 v _3837_/D (sky130_fd_sc_hd__dfxtp_1)
+             4.5995   data arrival time
+
+  14.5000   14.5000   clock clk (rise edge)
+   0.0000   14.5000   clock network delay (ideal)
+  -0.1000   14.4000   clock uncertainty
+   0.0000   14.4000   clock reconvergence pessimism
+            14.4000 ^ _3837_/CLK (sky130_fd_sc_hd__dfxtp_1)
+  -0.0974   14.3026   library setup time
+            14.3026   data required time
+-------------------------------------------------------------
+            14.3026   data required time
+            -4.5995   data arrival time
+-------------------------------------------------------------
+             9.7031   slack (MET)
+
+
+REPORT reg2out
+Startpoint: _3864_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: result_class[0] (output port clocked by clk)
+Path Group: clk
+Path Type: max
+
+    Delay      Time   Description
+-------------------------------------------------------------
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   0.0000    0.0000 ^ _3864_/CLK (sky130_fd_sc_hd__dfxtp_1)
+   0.3289    0.3289 ^ _3864_/Q (sky130_fd_sc_hd__dfxtp_1)
+   0.2861    0.6150 ^ _3082_/Y (sky130_fd_sc_hd__nor2b_1)
+   0.2241    0.8391 ^ _3086_/X (sky130_fd_sc_hd__and2_1)
+   0.0000    0.8391 ^ result_class[0] (out)
+             0.8391   data arrival time
+
+  14.5000   14.5000   clock clk (rise edge)
+   0.0000   14.5000   clock network delay (ideal)
+  -0.1000   14.4000   clock uncertainty
+   0.0000   14.4000   clock reconvergence pessimism
+  -2.9000   11.5000   output external delay
+            11.5000   data required time
+-------------------------------------------------------------
+            11.5000   data required time
+            -0.8391   data arrival time
+-------------------------------------------------------------
+            10.6609   slack (MET)
+
+
+REPORT in2out
+Startpoint: rst (input port clocked by clk)
+Endpoint: result_class[0] (output port clocked by clk)
+Path Group: clk
+Path Type: max
+
+    Delay      Time   Description
+-------------------------------------------------------------
+   0.0000    0.0000   clock clk (rise edge)
+   0.0000    0.0000   clock network delay (ideal)
+   2.9000    2.9000 v input external delay
+   0.0232    2.9232 v rst (in)
+   0.1570    3.0802 v _3115_/X (sky130_fd_sc_hd__clkbuf_1)
+   0.2941    3.3742 ^ _3082_/Y (sky130_fd_sc_hd__nor2b_1)
+   0.2241    3.5983 ^ _3086_/X (sky130_fd_sc_hd__and2_1)
+   0.0000    3.5983 ^ result_class[0] (out)
+             3.5983   data arrival time
+
+  14.5000   14.5000   clock clk (rise edge)
+   0.0000   14.5000   clock network delay (ideal)
+  -0.1000   14.4000   clock uncertainty
+   0.0000   14.4000   clock reconvergence pessimism
+  -2.9000   11.5000   output external delay
+            11.5000   data required time
+-------------------------------------------------------------
+            11.5000   data required time
+            -3.5983   data arrival time
+-------------------------------------------------------------
+             7.9017   slack (MET)
+
+
+ELECTRICAL_BEGIN
+ELECTRICAL_END

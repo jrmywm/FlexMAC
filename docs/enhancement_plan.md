@@ -1,6 +1,6 @@
 # FlexMAC follow-up: overlap, cost attribution, and bounded scaling
 
-Status: planned; no new performance or correctness result is implied by this plan.
+Status: executed and audited. See `docs/followup_experiments.md` and the archived audit records for verified results and limits. Terra drafted the implementation; the parent corrected audit findings and completed execution after Terra reached its usage limit.
 
 ## Objective
 

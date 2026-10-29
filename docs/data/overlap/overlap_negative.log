@@ -1,0 +1,2 @@
+FATAL: tests/tb_overlap.v:48: pending score/class/last tag mismatch
+       Time: 2515000  Scope: tb_overlap

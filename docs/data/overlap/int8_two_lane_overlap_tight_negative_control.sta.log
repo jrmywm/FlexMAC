@@ -1,0 +1,21 @@
+OpenSTA 3.1.0 b99a8e528d Copyright (c) 2026, Parallax Software, Inc.
+License GPLv3: GNU GPL version 3 <http://gnu.org/licenses/gpl.html>
+
+This is free software, and you are free to change and redistribute it
+under certain conditions; type `show_copying' for details. 
+This program comes with ABSOLUTELY NO WARRANTY; for details type `show_warranty'.
+ time 1ns
+ capacitance 1pF
+ resistance 1kohm
+ voltage 1v
+ current 1mA
+ power 1nW
+ distance 1um
+CHECK_BEGIN
+CHECK_END
+GROUP reg2reg -11.383666 _6329_/Q _5987_/D
+GROUP in2reg -1.511571 rst _6268_/D
+GROUP reg2out -1.125971 _6006_/Q pixel_ready
+GROUP in2out -0.643514 rst result_class[0]
+worst slack max -11.383666
+worst slack min 0.121326

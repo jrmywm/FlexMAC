@@ -1,0 +1,11 @@
+read_liberty -lib -overwrite /home/runner/work/FlexMAC/FlexMAC/build/synthetic/map/library_pruned.lib;
+read_verilog rtl/flexmac_synthetic.v;
+chparam -set FEATURES 128 -set CLASSES 10 -set SCHEDULE 2 flexmac_synthetic;
+synth -top flexmac_synthetic -flatten -noabc;
+dfflibmap -liberty /home/runner/work/FlexMAC/FlexMAC/build/synthetic/map/library_pruned.lib;
+abc -liberty /home/runner/work/FlexMAC/FlexMAC/build/synthetic/map/library_pruned.lib -D 10000 -constr /home/runner/work/FlexMAC/FlexMAC/build/synthetic/map/abc.constr;
+opt_clean -purge;
+check -assert;
+rename flexmac_synthetic flexmac_mapped;
+write_json /home/runner/work/FlexMAC/FlexMAC/build/synthetic/map/synthetic_128_10_2.json;
+write_verilog -noattr -noexpr /home/runner/work/FlexMAC/FlexMAC/build/synthetic/map/synthetic_128_10_2.v

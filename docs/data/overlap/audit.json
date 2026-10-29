@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "source_commit": "091f34e4aa0dfa5d764c56579836118e96b0e2ec",
+  "ci_run": 40807478848,
+  "source_hashes_checked": 21,
+  "designs": 3,
+  "frames_per_design_per_backend": 359,
+  "backends": [
+    "Verilator two-state",
+    "Icarus four-state"
+  ],
+  "frozen_baseline_netlist_matches": true,
+  "critical_endpoint": "accumulator[30] via mapped cell _5987_",
+  "critical_startpoint": "synthesized pixel read-address register _6329_/Q",
+  "limitation": "independent data/code audit and executed CI replay; not formal proof or physical signoff"
+}

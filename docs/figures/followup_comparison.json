@@ -1,0 +1,8 @@
+{
+  "scope": "pre-layout SKY130 typical corner, ideal wires/clock; synthetic RTL verification only",
+  "source_sha256": {
+    "docs/data/overlap/mapped_comparison.csv": "0ca0aa32faef86f03a9dd4dd9d799790a81d5c759df603b63a181ad016cec03c",
+    "docs/data/synthetic/results.csv": "5c6929f7d2fab417ffc1ae66918936d8b197eaf41f39a8b725215fffea9db90f",
+    "docs/data/area_attribution/attribution.json": "c514f161c117a3fbbff81a081f0dc2a2d87140c818e40045a36dc910c9554f56"
+  }
+}

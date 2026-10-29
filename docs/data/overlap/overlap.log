@@ -1,0 +1,2 @@
+PASS overlap: 359 calibration images; all INT8 class scores/predictions, score/class/last tags, exact 385 cycles plus input gaps, signed32 wrap, signed/tie/final comparison, invalid pixels, reset and stalls
+tests/tb_overlap.v:206: $finish called at 1418280000 (1ps)

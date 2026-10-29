@@ -1,0 +1,2 @@
+PASS synthetic features=128 classes=10 schedule=2: 24 runtime-input frames, all scores, cycles, gaps, stalls, extremes, tie and reset
+tests/tb_synthetic.v:107: $finish called at 202950000 (1ps)

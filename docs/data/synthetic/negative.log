@@ -1,0 +1,2 @@
+FATAL: tests/tb_synthetic.v:76: wrong winner/missing score
+       Time: 3940000  Scope: tb_synthetic

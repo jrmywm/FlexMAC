@@ -44,6 +44,16 @@ The [illustrated architecture guide](docs/architecture.md) explains the
 before/after datapath, controller states, arithmetic widths and the 384-to-394
 cycle schedule, with PNG drawings, SVG exports and editable Mermaid diagrams.
 
+The [audited follow-up experiments](docs/followup_experiments.md) add overlapping
+score comparison, an adaptive-area diagnostic, and a bounded synthetic shape
+sweep. Overlap recovers nine cycles (394 to 385), but its longer tested period
+gives 4.482 us versus 4.448 us for separate comparison. Fewer cycles do not
+automatically mean lower latency. The original baselines remain frozen.
+
+To reproduce the new RTL checks, run `bash scripts/check_overlap.sh` and
+`bash scripts/check_synthetic.sh`. Mapping additionally uses the same pinned
+Yosys/OpenSTA flow; the follow-up guide links the measured evidence and limits.
+
 ## Current implementation
 
 - A shared partial-product core: one signed INT8 product, or two signed INT4

@@ -1,0 +1,11 @@
+read_liberty -lib -overwrite /home/runner/work/FlexMAC/FlexMAC/build/area_attribution/library_pruned.lib;
+read_verilog rtl/flexmac_product.v rtl/flexmac_baselines.v rtl/flexmac_int8x2.v rtl/digits_model_rom.v rtl/digits_residual_rom.v rtl/digits_pixel_quantizer.v rtl/flexmac_adaptive.v;
+chparam -set FORCE_INT8 0 -set INT8_LANES 1 -set PRODUCT_IMPL 0 flexmac_adaptive;
+synth -top flexmac_adaptive -noabc;
+dfflibmap -liberty /home/runner/work/FlexMAC/FlexMAC/build/area_attribution/library_pruned.lib;
+abc -liberty /home/runner/work/FlexMAC/FlexMAC/build/area_attribution/library_pruned.lib -D 10000 -constr /home/runner/work/FlexMAC/FlexMAC/build/area_attribution/abc.constr;
+opt_clean -purge;
+check -assert;
+write_json /home/runner/work/FlexMAC/FlexMAC/build/area_attribution/adaptive_hierarchy.json;
+flatten;
+write_json /home/runner/work/FlexMAC/FlexMAC/build/area_attribution/adaptive_hierarchy_flattened.json
