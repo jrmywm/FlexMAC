@@ -1,0 +1,50 @@
+name: Compact selective exact refinement
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/compact-selective-refinement]
+  pull_request:
+    paths:
+      - 'rtl/flexmac_compact_refine.v'
+      - 'rtl/flexmac_int8x4_scorepipe.v'
+      - 'tests/tb_compact_refine.v'
+      - 'scripts/*compact*'
+      - '.github/workflows/compact-refinement.yml'
+permissions:
+  contents: read
+jobs:
+  study:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: bash scripts/install_ci_tools.sh timing
+      - uses: actions/cache/restore@v4
+        id: tools
+        with:
+          path: .tools
+          key: flexmac-timing-ubuntu24-${{ hashFiles('eda/toolchain.json', 'scripts/build_timing_tools.sh') }}-v1
+      - if: steps.tools.outputs.cache-hit != 'true'
+        run: bash scripts/build_timing_tools.sh
+      - run: bash scripts/check_compact_refine.sh
+      - run: bash scripts/check_scorepipe.sh
+      - run: python scripts/map_compact_refine.py
+        env:
+          STA: ${{ github.workspace }}/.tools/OpenSTA/build/sta
+      - if: always()
+        run: git bundle create build/compact-source.bundle HEAD
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compact-refinement-evidence
+          path: |
+            build/compact_refinement/
+            build/compact-source.bundle
+            build/scorepipe.csv
+            build/scorepipe.log
+            docs/data/compact_refinement/screen.json
