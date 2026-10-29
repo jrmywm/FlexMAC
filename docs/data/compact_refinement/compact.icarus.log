@@ -1,0 +1,2 @@
+PASS compact refinement: 17 frames; decisions, flags, cycles, gaps, reset, stalls, invalid inputs; internal score/selection checks in RTL builds
+tests/tb_compact_refine.v:161: $finish called at 81370000 (1ps)

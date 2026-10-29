@@ -1,0 +1,89 @@
+{
+  "status": "offline_screen_only",
+  "scope": "frozen training/calibration; no test access",
+  "score_domain_extrema": {
+    "8": [
+      -212584,
+      223820
+    ],
+    "4": [
+      -568,
+      600
+    ]
+  },
+  "splits": {
+    "train": {
+      "samples": 1078,
+      "exact_classes_histogram": [
+        456,
+        0,
+        213,
+        148,
+        127,
+        51,
+        42,
+        19,
+        19,
+        3,
+        0
+      ],
+      "mean_exact_classes": 2.038033395176252,
+      "decision_mismatches": 0,
+      "projected_mean_cycles_by_int4_lanes": {
+        "2": 486.02504638218926,
+        "4": 326.02504638218926,
+        "8": 246.02504638218923
+      },
+      "baseline_scorepipe_cycles": 394,
+      "required_period_ratio_to_scorepipe": {
+        "2": 0.8106578106062775,
+        "4": 1.2084961090324506,
+        "8": 1.6014629640103313
+      }
+    },
+    "calibration": {
+      "samples": 359,
+      "exact_classes_histogram": [
+        134,
+        0,
+        81,
+        46,
+        33,
+        28,
+        14,
+        13,
+        5,
+        5,
+        0
+      ],
+      "mean_exact_classes": 2.317548746518106,
+      "decision_mismatches": 0,
+      "projected_mean_cycles_by_int4_lanes": {
+        "2": 495.7465181058496,
+        "4": 335.7465181058496,
+        "8": 255.7465181058496
+      },
+      "baseline_scorepipe_cycles": 394,
+      "required_period_ratio_to_scorepipe": {
+        "2": 0.7947610030735,
+        "4": 1.173504351505397,
+        "8": 1.5405879341705422
+      }
+    }
+  },
+  "bound_kind": "existing exact global pairwise thresholds, K=366",
+  "threshold_payload_bits": 720,
+  "limitations": [
+    "Not synthesized, timed, or RTL verified.",
+    "Cycle projections assume dedicated compare/check states and paired INT8 refinement.",
+    "No new algorithmic novelty is established."
+  ],
+  "source_sha256": {
+    "rtl/digits_model_rom.v": "341e18b39b3116beda1583d5867ecbedf688abe9ddd64e58b7663498d1c250fd",
+    "model/certification.py": "6f2a138f5786de4f1f6a38ff34f7651eb00256d2b4e11fe5268a543cbfddc129",
+    "scripts/screen_compact_refinement.py": "38d7a1d235edb76657e0553d6ace9e3ec0f26e9feaec5649ecc57366740ac044",
+    "model/agreement/scores_int4.hex": "82bbc4bd5d52778f016d19b6393689890e24d58c26abaf2cb5b1852ea060b1a2",
+    "model/agreement/scores_int8.hex": "ab2d1435c872b4e96f83f961cfbe172d5e572c72513c80cacffbb7ea314faa45",
+    "model/agreement/raw_pixels.hex": "14e69b4c825aa82bc20968f8ab7c4deb3282cc34abac3cddd5dd308dc9f6303b"
+  }
+}

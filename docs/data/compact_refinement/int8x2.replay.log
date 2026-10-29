@@ -1,0 +1,2 @@
+PASS gate-level scorepipe black-box replay: 359 calibration images; predictions, flags, exact 394 cycles plus input gaps, invalid pixels, reset in both boundary COMPARE cycles, stalls
+- /home/runner/work/FlexMAC/FlexMAC/tests/tb_scorepipe.v:204: Verilog $finish

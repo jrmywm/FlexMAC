@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "ci_run": 40835765315,
+  "source_commit": "771987a96df71341678d3d0494251e84cb44b238",
+  "source_hashes_checked": 25,
+  "area_and_netlist_hashes_checked": true,
+  "four_state_frames_per_design": 359,
+  "scope": "Initial 32-bit low-score storage variant; superseded by the width-correct variant."
+}

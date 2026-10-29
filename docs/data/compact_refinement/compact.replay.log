@@ -1,0 +1,2 @@
+PASS compact refinement: 359 frames; decisions, flags, cycles, gaps, reset, stalls, invalid inputs; internal score/selection checks in RTL builds
+- /home/runner/work/FlexMAC/FlexMAC/tests/tb_compact_refine.v:161: Verilog $finish
