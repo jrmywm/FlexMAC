@@ -81,7 +81,7 @@
   "source_sha256": {
     "rtl/digits_model_rom.v": "341e18b39b3116beda1583d5867ecbedf688abe9ddd64e58b7663498d1c250fd",
     "model/certification.py": "6f2a138f5786de4f1f6a38ff34f7651eb00256d2b4e11fe5268a543cbfddc129",
-    "scripts/screen_compact_refinement.py": "6e2844f4a7f977f1e81de4aad0cb3c6fa1edd014985f703123f8ab29d5f7cd26",
+    "scripts/screen_compact_refinement.py": "38d7a1d235edb76657e0553d6ace9e3ec0f26e9feaec5649ecc57366740ac044",
     "model/agreement/scores_int4.hex": "82bbc4bd5d52778f016d19b6393689890e24d58c26abaf2cb5b1852ea060b1a2",
     "model/agreement/scores_int8.hex": "ab2d1435c872b4e96f83f961cfbe172d5e572c72513c80cacffbb7ea314faa45",
     "model/agreement/raw_pixels.hex": "14e69b4c825aa82bc20968f8ab7c4deb3282cc34abac3cddd5dd308dc9f6303b"

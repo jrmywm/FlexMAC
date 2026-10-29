@@ -18,10 +18,12 @@ module flexmac_compact_refine (
                SELECT=5, EXACT=6, EXACT_COMPARE=7, RESULT=8;
     reg [3:0] state;
     reg [4:0] pixels [0:63];
-    reg [31:0] low_scores [0:9];
+    // Domain-wide frozen-model INT4 range is [-568,600], including its bias.
+    reg signed [10:0] low_scores [0:9];
     reg [5:0] index;
     reg [3:0] class_index, best_class, candidate, check_index;
-    reg signed [31:0] accumulator, pending_score, best_score, candidate_score;
+    reg signed [31:0] accumulator, pending_score, best_score;
+    reg signed [10:0] candidate_score;
     reg [9:0] active;
     reg uncertain, have_exact, fallback, input_error;
     wire mode4 = !fallback;
@@ -47,8 +49,8 @@ module flexmac_compact_refine (
     wire signed [31:0] completed_score=accumulator+{{15{beat_product[16]}},beat_product};
     wire signed [31:0] threshold;
     digits_agreement_bounds bounds(candidate,check_index,threshold);
-    wire signed [32:0] difference={candidate_score[31],candidate_score}-
-        {low_scores[check_index][31],low_scores[check_index]};
+    wire signed [11:0] difference={candidate_score[10],candidate_score}-
+        {low_scores[check_index][10],low_scores[check_index]};
     wire signed [32:0] extended_threshold={threshold[31],threshold};
     wire safe_rival=difference >= extended_threshold;
     wire score_commit=!rst && ((state==LOW && index==15) || (state==EXACT && index==31));

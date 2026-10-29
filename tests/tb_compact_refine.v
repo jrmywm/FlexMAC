@@ -21,7 +21,9 @@ module tb_compact_refine;
     reg [7:0] raw[0:1437*64-1],predictions[0:1436];
     reg [31:0] scores4[0:14369],scores8[0:14369];
     reg [9:0] masks[0:1436];
-    integer cycle=0,sample=0,low_checked=0,exact_checked=0,f,i,k;
+    integer cycle=0,sample=0,low_checked=0,exact_checked=0,f,i,k,run_index;
+    integer replay_count=COUNT,use_selection=0;
+    reg [31:0] indices[0:1436];
     reg checking=0;
     reg [9:0] seen;
     always @(posedge clk) begin
@@ -122,13 +124,19 @@ module tb_compact_refine;
                 $fatal(1,"compact output consumption");
         end
     endtask
-    reg [2047:0] report_path;
+    reg [2047:0] report_path,indices_path;
     initial begin
         $readmemh("model/agreement/raw_pixels.hex",raw);
         $readmemh("model/agreement/scores_int4.hex",scores4);
         $readmemh("model/agreement/scores_int8.hex",scores8);
         $readmemh("model/agreement/reference_int8.hex",predictions);
         $readmemh("build/compact_refinement/active_masks.hex",masks);
+        if($value$plusargs("indices=%s",indices_path)) begin
+            use_selection=1;
+            if(!$value$plusargs("count=%d",replay_count) || replay_count<1 || replay_count>1437)
+                $fatal(1,"invalid replay selection");
+            $readmemh(indices_path,indices,0,replay_count-1);
+        end
         if(!$value$plusargs("report=%s",report_path)) report_path="build/compact_refinement/rtl.csv";
         f=$fopen(report_path,"w");if(!f) $fatal(1,"compact report open");
         $fdisplay(f,"sample,prediction,fallback,exact_classes,cycles,input_gaps");
@@ -143,9 +151,13 @@ module tb_compact_refine;
             reset_engine;
         end
         infer(FIRST,0,0);infer(FIRST,0,63);
-        for(i=FIRST;i<FIRST+COUNT;i=i+1) begin infer(i,i%11==0,-1);$fflush(f);end
+        for(run_index=0;run_index<replay_count;run_index=run_index+1) begin
+            i=use_selection ? indices[run_index] : FIRST+run_index;
+            if(i<0 || i>=1437) $fatal(1,"selection outside fixture domain");
+            infer(i,i%11==0,-1);$fflush(f);
+        end
         $fclose(f);
-        $display("PASS compact refinement: %0d frames; exact scores, selection, decisions, cycles, gaps, reset, stalls and invalid inputs",COUNT);
+        $display("PASS compact refinement: %0d frames; decisions, flags, cycles, gaps, reset, stalls, invalid inputs; internal score/selection checks in RTL builds",replay_count);
         $finish;
     end
     initial begin #20000000;$fatal(1,"compact watchdog");end

@@ -42,6 +42,7 @@ def main():
         lo = min(bias[c]+sum(min(v*w for v in q) for w in weights[c]) for c in range(10))
         hi = max(bias[c]+sum(max(v*w for v in q) for w in weights[c]) for c in range(10))
         assert -(1 << 31) <= lo <= hi < (1 << 31)
+        if bits==4:assert -(1 << 10) <= lo <= hi < (1 << 10)
         extrema[str(bits)] = [lo,hi]
     report = {'status':'offline_screen_only', 'scope':'frozen training/calibration; no test access',
               'score_domain_extrema':extrema, 'splits':{},
