@@ -19,6 +19,13 @@ def main():
         with path.open() as f:return list(csv.DictReader(f))
     references={'compact':'build/compact_refinement/rtl.csv',
                 'int8x4':'build/compact_refinement/baseline4_all.csv','int8x2':'build/scorepipe.csv'}
+    compact=read(evidence/references['compact'])
+    wanted={1078,1436}
+    for key in ('prediction','exact_classes'):
+        for value in {r[key] for r in compact}:
+            wanted.add(next(int(r['sample']) for r in compact if r[key]==value))
+    negative=(evidence/'build/compact_refinement/negative.log').read_text()
+    assert re.search(r'compact (decision mismatch|cycles)',negative)
     for row in results['rows']:
         name=row['design'];reference=evidence/references[name]
         assert m.digest(reference)==row['reference_sha256']
@@ -28,6 +35,7 @@ def main():
         assert read(replay)==traces and m.digest(replay)==row['mapped_replay_sha256']
         four=mapped/f'{name}.icarus.csv'
         selection=row['four_state_indices']
+        assert selection==sorted(wanted)
         assert row['four_state_frames']==len(selection)
         assert m.digest(four)==row['four_state_sha256']
         assert read(four)==[r for r in traces if int(r['sample']) in selection]

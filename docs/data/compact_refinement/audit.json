@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "source_commit": "5b4bde4236ddfba01ac1c57dc141913afdc71c24",
+  "source_hashes_checked": 25,
+  "library_pruned_sha256": "3e3266e5322a41020df5062331f34e402e78bc0a3d2a7a4a2c21cc0908c15ae4",
+  "compiled_calibration_frames_per_design": 359,
+  "four_state_frames_per_design": {
+    "compact": 17,
+    "int8x4": 17,
+    "int8x2": 17
+  },
+  "source_results_sha256": "24616609784535ef01b276e326a8319026628d9628546e886147c03c5484c31c",
+  "comparisons": {
+    "int8x2": {
+      "candidate_area_change_percent": 53.476110679691025,
+      "candidate_mean_latency_change_percent": -12.393151834523163,
+      "candidate_worst_latency_change_percent": 46.12164930091727,
+      "baseline_dominates_candidate": false
+    },
+    "int8x4": {
+      "candidate_area_change_percent": 30.90357665760304,
+      "candidate_mean_latency_change_percent": 33.038150228570174,
+      "candidate_worst_latency_change_percent": 121.89765227739913,
+      "baseline_dominates_candidate": true
+    }
+  },
+  "limitations": "Data/code audit of executed CI; no formal sequential proof, power measurement, layout or fresh held-out evaluation."
+}

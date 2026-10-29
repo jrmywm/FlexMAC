@@ -1,0 +1,7 @@
+{
+  "ci_run": 40838063746,
+  "source_commit": "5b4bde4236ddfba01ac1c57dc141913afdc71c24",
+  "artifact_id": 12881616958,
+  "artifact_zip_sha256": "496a0807ffdb3300a30407aaa1998a58fa4f3bb349bcb4149af0a2f45d331cad",
+  "scope": "Final 11-bit stored INT4 scores; all 359 calibration frames compiled, 17 selected four-state frames per design; RTL all1437 training/calibration frames. IEEEtran report still describes the earlier study."
+}

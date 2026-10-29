@@ -1,0 +1,10 @@
+read_liberty -lib -overwrite /home/runner/work/FlexMAC/FlexMAC/build/compact_refinement/map/library_pruned.lib;
+read_verilog rtl/digits_model_rom.v rtl/digits_pixel_quantizer.v rtl/flexmac_baselines.v rtl/flexmac_int8x4_scorepipe.v;
+synth -top flexmac_int8x4_scorepipe -flatten -noabc;
+dfflibmap -liberty /home/runner/work/FlexMAC/FlexMAC/build/compact_refinement/map/library_pruned.lib;
+abc -liberty /home/runner/work/FlexMAC/FlexMAC/build/compact_refinement/map/library_pruned.lib -D 10000 -constr /home/runner/work/FlexMAC/FlexMAC/build/compact_refinement/map/abc.constr;
+opt_clean -purge;
+check -assert;
+rename flexmac_int8x4_scorepipe flexmac_mapped;
+write_json /home/runner/work/FlexMAC/FlexMAC/build/compact_refinement/map/int8x4.json;
+write_verilog -noattr -noexpr /home/runner/work/FlexMAC/FlexMAC/build/compact_refinement/map/int8x4.v

@@ -1,0 +1,2 @@
+PASS gate-level scorepipe black-box replay: 17 calibration images; predictions, flags, exact 394 cycles plus input gaps, invalid pixels, reset in both boundary COMPARE cycles, stalls
+tests/tb_scorepipe.v:204: $finish called at 79690000 (1ps)

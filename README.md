@@ -13,10 +13,21 @@ and evaluation; configurable precision itself is an established technique.
 
 ## Main finding
 
-For this frozen linear classifier, ordinary two-lane INT8 is a stronger design
-than the implemented adaptive INT4/INT8 engine. The adaptive design preserves
-INT8 decisions, but its certification hardware costs more area and its fallback
-adds latency. The project records that result, including the failed hypotheses.
+For this frozen linear classifier, fixed INT8 offers the stronger measured
+area/latency tradeoffs. The adaptive designs preserve INT8 decisions, but their
+checking, model-storage and control costs outweigh their computational savings
+against a strong parallel INT8 control.
+
+The latest [compact-refinement study](docs/compact_refinement.md) adds a useful
+four-lane INT8 implementation: **2.888 us versus 4.386 us for two lanes, about
+34% lower latency for 17% more cell area** in the same run. It passes full RTL
+score replay and mapped functional checks. A compact adaptive candidate also
+improves average latency over two lanes, but four-lane INT8 is both smaller and
+faster. See the study for timing assumptions, coverage and worst-case latency.
+The linked IEEE-style PDF covers the earlier study; the supplemental guide
+contains these newest results.
+
+The following table records the original precision study:
 
 | Raw-input engine | Mapped cell area (µm²) | Mean latency, common 19 ns clock | Mean latency, own tested setup period |
 | --- | ---: | ---: | ---: |

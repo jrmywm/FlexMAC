@@ -8,3 +8,4 @@ docs/report/latex/IEEEtran.cls -text -whitespace
 docs/report/latex/IEEEtran.bst -text -whitespace
 docs/data/overlap/*.log -whitespace
 docs/data/synthetic/*.log -whitespace
+docs/data/compact_refinement/*.log -whitespace

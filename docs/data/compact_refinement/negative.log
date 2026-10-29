@@ -1,0 +1,2 @@
+FATAL: tests/tb_compact_refine.v:100: compact cycles got=263 expected=339
+       Time: 20340000  Scope: tb_compact_refine.infer
