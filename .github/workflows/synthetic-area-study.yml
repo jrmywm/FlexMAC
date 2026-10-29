@@ -1,0 +1,51 @@
+name: Synthetic scheduling and adaptive area diagnostics
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  study:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: bash scripts/install_ci_tools.sh timing
+      - uses: actions/cache/restore@v4
+        id: tools
+        with:
+          path: .tools
+          key: flexmac-timing-ubuntu24-${{ hashFiles('eda/toolchain.json', 'scripts/build_timing_tools.sh') }}-v1
+      - if: steps.tools.outputs.cache-hit != 'true'
+        run: bash scripts/build_timing_tools.sh
+      - if: steps.tools.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .tools
+          key: flexmac-timing-ubuntu24-${{ hashFiles('eda/toolchain.json', 'scripts/build_timing_tools.sh') }}-v1
+      - run: bash scripts/check_synthetic.sh
+      - run: python scripts/area_attribution.py
+      - run: python scripts/map_synthetic.py
+        env:
+          STA: ${{ github.workspace }}/.tools/OpenSTA/build/sta
+      - if: always()
+        run: |
+          mkdir -p build
+          git bundle create build/synthetic-source.bundle HEAD
+          yosys -V > build/synthetic-yosys-version.log
+          iverilog -V > build/synthetic-iverilog-version.log 2>&1
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flexmac-synthetic-and-area
+          path: |
+            build/synthetic/
+            build/area_attribution/
+            build/synthetic-source.bundle
+            build/synthetic-*version.log

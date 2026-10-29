@@ -1,0 +1,9 @@
+{
+  "status": "pending_execution",
+  "scope": "synthetic runtime signed INT8 inputs and fixed weights; no model accuracy claim",
+  "shapes": [[32, 4], [64, 10], [128, 10]],
+  "schedules": {"0": "terminal compare", "1": "separate compare", "2": "overlapped compare with final drain"},
+  "fixture": "24 runtime feature frames: zeros, -128, 127, alternating extremes, then feature[t,i]=((37*i+53*t+13)%256)-128; weight[c,i]=((17*i+29*c+7)%256)-128; bias[c]=271*c-1000",
+  "storage": "runtime-loaded feature registers, identical initialized fixed weight and bias arrays per shape and schedule; two parallel feature and weight reads; loading included in latency",
+  "mapping": "same SKY130 library, ABC target, constraints and directly tested setup brackets as check_mapping.py"
+}
