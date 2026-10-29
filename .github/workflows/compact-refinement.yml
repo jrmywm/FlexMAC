@@ -24,6 +24,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: bash scripts/install_ci_tools.sh timing
+      - run: bash scripts/install_ci_tools.sh replay
       - uses: actions/cache/restore@v4
         id: tools
         with:

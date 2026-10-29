@@ -5,7 +5,7 @@ import check_mapping as m
 
 root=m.ROOT; out=root/'build/compact_refinement/map';out.mkdir(parents=True,exist_ok=True);m.MAP=out
 cfg=json.loads(m.CONFIG.read_text());src=root/cfg['library_path'];sta=os.environ.get('STA') or shutil.which('sta')
-if not sta or not shutil.which('yosys') or not src.exists():raise SystemExit('BLOCKED: pinned EDA tools required')
+if not sta or not all(shutil.which(t) for t in ('yosys','verilator','iverilog','vvp')) or not src.exists():raise SystemExit('BLOCKED: pinned EDA tools and both replay simulators required')
 if m.digest(src)!=cfg['library_sha256']:raise ValueError('library hash mismatch')
 for key,path in (('opensta_commit','.tools/OpenSTA'),('cudd_commit','.tools/cudd')):
     if subprocess.check_output(['git','-C',str(root/path),'rev-parse','HEAD'],text=True).strip()!=cfg[key]:raise ValueError('tool revision mismatch')
@@ -68,5 +68,5 @@ for r in rows:
     if not t['setup_met'] or not t['hold_met'] or t['electrical_violations_reported']:raise ValueError('common clock failed')
     r.update(common_period_ns=common,common_mean_latency_ns=r['mean_cycles']*common,common_setup_wns_ns=t['setup_wns_ns'],common_hold_wns_ns=t['hold_wns_ns'])
 provenance={p:m.digest(root/p) for p in dict.fromkeys([p for _,_,s,b,_,_ in specs for p in s+[b]]+['scripts/map_compact_refine.py','scripts/screen_compact_refinement.py','scripts/check_compact_refine.sh','model/certification.py','eda/toolchain.json']+[p.relative_to(root).as_posix() for p in (root/'model/agreement').glob('*.hex')])}
-report={'status':'complete','source_commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True,cwd=root).strip(),'scope':'frozen calibration, pre-layout typical corner, ideal clock and wires; full zero-delay compiled replay plus selected four-state replay; no power claim','source_sha256':provenance,'library_sha256':m.digest(src),'sta_binary_sha256':m.digest(sta),'yosys_version':subprocess.check_output(['yosys','-V'],text=True).strip(),'config':cfg,'rows':rows}
+report={'status':'complete','source_commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True,cwd=root).strip(),'scope':'frozen calibration, pre-layout typical corner, ideal clock and wires; full zero-delay compiled replay plus selected four-state replay; no power claim','source_sha256':provenance,'library_sha256':m.digest(src),'sta_binary_sha256':m.digest(sta),'yosys_version':subprocess.check_output(['yosys','-V'],text=True).strip(),'verilator_version':subprocess.check_output(['verilator','--version'],text=True).strip(),'config':cfg,'rows':rows}
 m.save(out/'results.json',json.dumps(report,indent=2)+'\n')
